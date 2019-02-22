@@ -1,0 +1,106 @@
+#####   #####   ######  #####   #        ####    #   #  ######  #####
+ #    #  #    #  #       #    #  #       #    #    # #   #       #    #
+ #    #  #    #  #####   #    #  #       #    #     #    #####   #    #
+ #####   #    #  #       #####   #       #    #     #    #       #####
+ #   #   #    #  #       #       #       #    #     #    #       #   #
+ #    #  #####   ######  #       ######   ####      #    ######  #    #
+ 
+SINOPSIS.
+
+El rdeployer es un shell adaptado para usar con Jenkins, el cual funciona como un plugin para realizar deploy de aplicaciones (WAR,EAR, etc.)
+de una manera automatizada.
+
+
+ESTRUCTURA DE ARCHIVOS.
+
+A continuación, vamos a indicar los archivos que se utilizan para crear la estructura que necesitaremos, con el fin de poder deployar bajo
+Jenkins:
+
+rdeployer.sh        -   Shell principal que realiza todo el deployado.
+util/xmlUtil.io     -   Sistema sh que permite leer el archivo consoles.xml, en el cual es donde almacenamos nuestros usuarios y passwords.
+conf/consoles.xml   -   Archivo XML donde almacenamos usuarios y passwords de las consolas Weblogics, para acceder a ellas y deployar.
+conf/plantilla.conf -   Archivo de configuración, usado para configuraciones necesarias en cada componente.
+
+Los  tres primeros archivos anteriores, son necesarios para poder realizar los deploy en cada una de las consolas Weblogic que tengamos, por lo cual
+se deben mantener con la estructura mencionada anteriormente. A continuación vamos a indicar los demás archivos que necesitamos y que
+dichos archivos son necesarios para deploy:
+
+
+{NombreDelComponenteWAR}.start
+
+Archivo de liga suave, que va linkeado con rdeployer.sh, llevando el nombre del componente WAR o EAR, del que se vaya a deployar. Ejemplo:
+Nuestro war se llama DeployExample.war, por lo tanto el archivo start se llamará DeployExample.start linkeado a rdeployer.sh. Se puede
+realizar el copiado del archivo rdeployer.sh cone l nombre del war.start, sin embargo se recomienda que sea como liga suave, ya que
+cuando el shell rdeployer.sh sufra una actualización, éste actualizará a todos los jobs linkeados a él.
+
+{NombreDelComponenteWAR}.conf
+
+Archivo de configuración, que permite proporcionar información a reployer sobre la consola WebLogic donde vamos a deployar, se puede crear
+una copia del archivo plantilla.conf que se encuentra en el directorio conf, se debe encontrar dicho archivo de configuración junto al
+archivo .start, usando el ejemplo anterior del componente DeployExample.war:
+
+
+DeployExample.conf
+DeployExample.start -> ../rdeployer.sh*
+
+
+COMO INSTALAR.
+
+1.- Descargar los siguientes componentes del repositorio:
+
+rdeployer.sh
+util/
+util/xmlUtil.io
+conf/
+conf/consoles.xml
+conf/plantilla.conf
+Example/
+Example/DeployExample.conf
+Example/DeployExample.start
+
+2.- Copiarlos en tu servidor en el directorio $HOME/rdeployer/
+
+3.- Dependiendo de cuantos ambientes tengas (producción, no producción, etc.), dentro del directorio $HOME/rdeployer/ vamos a crear
+    un directorio con el nombre del ambiente, Ejemplo: 
+    $HOME/rdeployer/QA
+    $HOME/rdeployer/PROD
+    $HOME/rdeployer/NOPROD
+    
+4.- En cada uno de los directorios, crearemos los archivos .start y .conf, para efectos de Ejemplo vamos a suponer que tenemos que
+    crear los archivos para un componente llamado Clock.war para el ambiente de QA:
+    
+    Entrar al directorio de QA $HOME/rdeployer/QA
+    Ejecutar el comando: ln -s ../rdeployer.sh Clock.start
+    Copiar archivo conf: cp -rp ../conf/plantilla.conf Clock.conf
+    Editar el archivo conf y llenar las variables que se piden.
+    
+ 5.- Agregar los datos de acceso a la consola Weblogic en el archivo consoles.xml, el cual los datos que se piden son:
+    <node></node>         - Nombre del nodo que se le da a dicha consola, el cual se colocará en la variable NODE del archivo conf
+    <host></host>         - Nombre del hostname o IP de la consola WebLogic.
+    <port></port>         - Puerto de acceso a la consola WebLogic.
+    <login></login>       - Usuario con el que se accede a la consola WebLogic.
+    <password></password> - Password para acceder a la consola WebLogic.
+    
+    
+6.- Una vez que se crearon los puntos anteriores para los diferentes componentes que vayamos a deployar, debemos ahora configurar
+    algunos valores en la consola de Jenkins, que permitirán integrar a nuestro rdeployer a Jenkins:
+    
+    - Accesar a la consola de Jenkins.
+    - Entrar a "Administrar Jenkins" -> "Configuración del Sistema"
+    - Las variables que debemos agregar son: APHOME, JAVA_HOME, NPROD y WEBLOGIC_HOME. Ejemplos:
+            APHOME: Directorio Home de rdeployer: /directorio/home/rdeployer
+            JAVA_HOME: Directorio home de Java: /opt/apps/java/jdk1.8.0_144
+            NPROD: 0 #El valor que lleva es 0 y 1:
+                        0 - Indica que rdeployer va a ejecutar todos los jobs como productivo y se instalará en el server del conf
+                        1 - Indica que rdeployer se ejecuta como no productivo, instala el WAR en el upload del DOMAIN HOME WL
+            WEBLOGIC_HOME: /opt/apps/wl10/wlserver_10.3  #Binarios de WebLogic (WL 10 en adelante)
+            
+7.- Una vez agregado las variables anteriores en Jenkins, ya podemos proceder a crear Jobs en Jenkins, en el cual lo veremos en el
+    siguiente tema.
+    
+    
+
+CREAR JOBS EN JENKINS.
+
+
+    
