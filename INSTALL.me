@@ -10,6 +10,20 @@ SINOPSIS.
 El rdeployer es un shell adaptado para usar con Jenkins, el cual funciona como un plugin para realizar deploy de aplicaciones (WAR,EAR, etc.)
 de una manera automatizada.
 
+rdeployer maneja instalaciones en formato productivo y no productivo, significa que para el formato productivo podemos utilizar Request
+For Comments (RFC) o del formato no productivo que consiste subir el componente WAR/EAR en modo upload, el cual lo sube al server de la
+consola.
+
+
+PRERREQUISITOS.
+
+Algunos prerrequisitos que se deben tener en consideración:
+
+ - Debemos contar con acceso a Jenkins.
+ - Instalar rdeployer en el servidor donde se encuentre Jenkins.
+ - El usuario con el que se levantó Jenkins, debe ser el mismo owner para rdeployer.
+ - Se debe tener acceso por SSH a los servidores donde estén las consolas WebLogic desde el servidor de Jenkins.
+
 
 ESTRUCTURA DE ARCHIVOS.
 
@@ -147,6 +161,11 @@ Debemos tener presente que los Jobs utilizan las siguientes partes:
     nombre del directorio que se creó.
     
 8.- Salvamos el proyecto.
+
+9.- Ejecutamos el job para instalación del componente, previamente copiado el componente WAR/EAR en la ruta donde especificamos que
+    tomará el archivo en la variable "RTJK" del archivo de configuración.
+    
+10.- Disfruta creando tantos jobs como quieras :-)
    
  
     
