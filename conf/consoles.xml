@@ -1,0 +1,11 @@
+<Weblogic>
+<Consoles>
+  <Console-target>
+    <node>ExampleNode01</node>
+    <host>192.168.0.1</host>
+    <port>9001</port>
+    <login>admin</login>
+    <password>adminexample</password>
+  </Console-target>
+</Consoles>
+</Weblogic>
