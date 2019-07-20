@@ -1,0 +1,5 @@
+ERR1="java.lang.OutOfMemoryError"
+ERR2="PermGen space"
+ERR3=""
+SOL="Se terminó la memoria en la instancia, favor de revisar la instancia donde se está deployando"
+

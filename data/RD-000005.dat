@@ -1,0 +1,5 @@
+ERR1="weblogic.application.ModuleException: Context path"
+ERR2="is already in use by the module:"
+ERR3="application:"
+SOL="Se deployó el componente con otro nombre al WAR, favor de ingresar a la consola Web, borrar el war y ejecutar de Nuevo desde Jenkins."
+

@@ -1,0 +1,5 @@
+ERR1="Java heap space"
+ERR2=""
+ERR3=""
+SOL="La memoria configurada para ejecutar el Deployer se acabó. Favor de revisar la configuración de rdeployer."
+

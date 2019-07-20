@@ -1,0 +1,5 @@
+ERR1="Could not resolve placeholder"
+ERR2="in string value"
+ERR3=""
+SOL="Falta que se agregue la variable ${xxxxxx} en el properties de todos los servidores que estén en cluster o en la instancia (Revisar salida del log de rdeployer)"
+

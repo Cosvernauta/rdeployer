@@ -1,0 +1,5 @@
+ERR1="Commit failed message received for id:"
+ERR2="but exception details cannot be transported."
+ERR3="Please look at target server log file for more details."
+SOL="Error de comunicación a nivel cluster de las instancias de Weblogic."
+

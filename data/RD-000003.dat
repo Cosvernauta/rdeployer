@@ -1,0 +1,5 @@
+ERR1="The domain edit lock is owned by another session in non-exclusive mode."
+ERR2="This deployment operation requires exclusive access to the edit lock and therefore cannot proceed"
+ERR3=""
+SOL="La consola de Weblogic se quedó en modo “Lock and Edit”, favor de entrar a la consola web de WebLogic, revisar los cambios que tenga por aplicar y active los cambios o descarte los cambios."
+
