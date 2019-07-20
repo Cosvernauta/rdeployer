@@ -9,5 +9,6 @@ Una herramienta en shell, para deployar componentes en Weblogic, usando Jenkins 
 #       1.5.17 - 190818-0957
 #       1.5.20 - 110119-0528
 #       2.0A   - 020219-2006
+#       2.0.3  - 200719-0023
 # Jimmy R. cosvernautaux(a)gmail.com
 
