@@ -34,6 +34,7 @@ rdeployer.sh        -   Shell principal que realiza todo el deployado.
 util/xmlUtil.io     -   Sistema sh que permite leer el archivo consoles.xml, en el cual es donde almacenamos nuestros usuarios y passwords.
 conf/consoles.xml   -   Archivo XML donde almacenamos usuarios y passwords de las consolas Weblogics, para acceder a ellas y deployar.
 conf/plantilla.conf -   Archivo de configuración, usado para configuraciones necesarias en cada componente.
+data/               -   Directorio con un catálogo de errores en Weblogic, rdeployer podrá validar el error que arroje e indicarte la acción o posible solución.
 
 Los  tres primeros archivos anteriores, son necesarios para poder realizar los deploy en cada una de las consolas Weblogic que tengamos, por lo cual
 se deben mantener con la estructura mencionada anteriormente. A continuación vamos a indicar los demás archivos que necesitamos y que
@@ -68,6 +69,7 @@ util/xmlUtil.io
 conf/
 conf/consoles.xml
 conf/plantilla.conf
+data/
 Example/
 Example/DeployExample.conf
 Example/DeployExample.start
