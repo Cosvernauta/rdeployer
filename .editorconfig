@@ -1,0 +1,36 @@
+# (c) 2020, Andres Aquino <andres@aquino.page>
+# This file is licensed under the BSD License version 3 or later.
+# See the LICENSE file.
+#
+
+# EditorConfig is an awesome vim/neovim plugin
+# http://EditorConfig.org
+#
+# How to install ?
+# - Copy editor.cnf to ${HOME}/.editorconfig
+# - Update your plugins
+# - enjoy!
+
+# top-most EditorConfig file
+root                     = true
+
+#
+[*]
+charset                  = utf-8
+end_of_line              = lf
+indent_style             = space
+indent_size              = 4
+insert_final_newline     = true
+trim_trailing_whitespace = true
+
+[*.{sh,profile}]
+indent_size              = 3
+
+[*.{yml,yaml,xml}]
+indent_size              = 3
+
+[*.{md,markdown}]
+indent_size              = 5
+max_line_length          = 200
+
+# vim: ft=dosini:

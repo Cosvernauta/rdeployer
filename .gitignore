@@ -1,0 +1,25 @@
+# .gitignore
+
+#
+.env
+*.env
+
+# logs & data
+*.log
+*.sql
+*.sqlite
+*.tar.gz
+
+# OS generated files
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# VIM swap files
+*.swp
+
+# except .gitkeep
+!.gitkeep
