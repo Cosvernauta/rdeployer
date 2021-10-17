@@ -1,0 +1,5 @@
+ERR1="Deploy task cannot run with a new task"
+ERR2=""
+ERR3=""
+SOL="Tareas atoradas, favor de reiniciar consola Admin o revisar tareas en consola web"
+
