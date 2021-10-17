@@ -31,12 +31,14 @@ A continuación, vamos a indicar los archivos que se utilizan para crear la estr
 Jenkins:
 
 rdeployer.sh        -   Shell principal que realiza todo el deployado.
-util/xmlUtil.io     -   Sistema sh que permite leer el archivo consoles.xml, en el cual es donde almacenamos nuestros usuarios y passwords.
+util/xmlUtil.io     -   Sistema sh que permite leer el archivo consoles.xml, en el cual es donde almacenamos nuestros usuarios y passwords (deprecated)
+util/xmlUtil2.io    -   Sistem sh que permite leer el archivo consoles.xml, nueva version ahora leyendo de forma nativa el xml.
 conf/consoles.xml   -   Archivo XML donde almacenamos usuarios y passwords de las consolas Weblogics, para acceder a ellas y deployar.
+conf/rdeployer.conf -   Archivo de configuración para rdeployer (versión 3.1.x en adelante)
 conf/plantilla.conf -   Archivo de configuración, usado para configuraciones necesarias en cada componente.
 data/               -   Directorio con un catálogo de errores en Weblogic, rdeployer podrá validar el error que arroje e indicarte la acción o posible solución.
 
-Los  tres primeros archivos anteriores, son necesarios para poder realizar los deploy en cada una de las consolas Weblogic que tengamos, por lo cual
+Todos los archivos mencionados, son necesarios para poder realizar los deploy en cada una de las consolas Weblogic que tengamos, por lo cual
 se deben mantener con la estructura mencionada anteriormente. A continuación vamos a indicar los demás archivos que necesitamos y que
 dichos archivos son necesarios para deploy:
 
@@ -45,7 +47,7 @@ dichos archivos son necesarios para deploy:
 
 Archivo de liga suave, que va linkeado con rdeployer.sh, llevando el nombre del componente WAR o EAR, del que se vaya a deployar. Ejemplo:
 Nuestro war se llama DeployExample.war, por lo tanto el archivo start se llamará DeployExample.start linkeado a rdeployer.sh. Se puede
-realizar el copiado del archivo rdeployer.sh cone l nombre del war.start, sin embargo se recomienda que sea como liga suave, ya que
+realizar el copiado del archivo rdeployer.sh con el nombre del war.start, sin embargo se recomienda que sea como liga suave, ya que
 cuando el shell rdeployer.sh sufra una actualización, éste actualizará a todos los jobs linkeados a él.
 
 {NombreDelComponenteWAR}.conf
@@ -66,10 +68,12 @@ COMO INSTALAR.
 rdeployer.sh
 util/
 util/xmlUtil.io
+util/xmlUtil2.io
 conf/
 conf/consoles.xml
+conf/rdeployer.conf
 conf/plantilla.conf
-data/
+data/RD*.dat
 Example/
 Example/DeployExample.conf
 Example/DeployExample.start
@@ -89,14 +93,37 @@ Example/DeployExample.start
     Ejecutar el comando: ln -s ../rdeployer.sh Clock.start
     Copiar archivo conf: cp -rp ../conf/plantilla.conf Clock.conf
     Editar el archivo conf y llenar las variables que se piden.
-    
- 5.- Agregar los datos de acceso a la consola Weblogic en el archivo consoles.xml, el cual los datos que se piden son:
+5.- Datos de consola - OSB/JBoss/Weblogic    
+
+5.1- Weblogic.
+5.1.1- Agregar los datos de acceso a la consola Weblogic en el archivo consoles.xml, después de la etiqueta <Weblogic> y antes de </Weblogic> el cual los datos que se piden son:
+    <Console-target>
     <node></node>         - Nombre del nodo que se le da a dicha consola, el cual se colocará en la variable NODE del archivo conf
     <host></host>         - Nombre del hostname o IP de la consola WebLogic.
     <port></port>         - Puerto de acceso a la consola WebLogic.
     <login></login>       - Usuario con el que se accede a la consola WebLogic.
     <password></password> - Password para acceder a la consola WebLogic.
+    </Console-target>
     
+5.2- JBoss
+5.2.1- Agregar los datos de acceso a la consola JBoss en el archivo consoles.xml, después de la etiqueta <JBoss> y antes de </JBoss> el cual los datos que se piden son:
+    <Console-target>
+    <node></node>         - Nombre del nodo que se le da a dicha consola, el cual se colocará en la variable NODE del archivo conf
+    <host></host>         - Nombre del hostname o IP de la consola WebLogic.
+    <port></port>         - Puerto de acceso a la consola WebLogic.
+    <login></login>       - Usuario con el que se accede a la consola WebLogic.
+    <password></password> - Password para acceder a la consola WebLogic.
+    </Console-target>
+    
+5.3- Oracle Services bus
+5.3.1- Agregar los datos de acceso a la consola OSB/ESB en el archivo consoles.xml, después de la etiqueta <ESB> y antes de </ESB> el cual los datos que se piden son:
+    <Console-target>
+    <node></node>         - Nombre del nodo que se le da a dicha consola, el cual se colocará en la variable NODE del archivo conf
+    <host></host>         - Nombre del hostname o IP de la consola WebLogic.
+    <port></port>         - Puerto de acceso a la consola WebLogic.
+    <login></login>       - Usuario con el que se accede a la consola WebLogic.
+    <password></password> - Password para acceder a la consola WebLogic.
+    </Console-target>
     
 6.- Una vez que se crearon los puntos anteriores para los diferentes componentes que vayamos a deployar, debemos ahora configurar
     algunos valores en la consola de Jenkins, que permitirán integrar a nuestro rdeployer a Jenkins:
@@ -109,7 +136,9 @@ Example/DeployExample.start
             NPROD: 0 #El valor que lleva es 0 y 1:
                         0 - Indica que rdeployer va a ejecutar todos los jobs como productivo y se instalará en el server del conf
                         1 - Indica que rdeployer se ejecuta como no productivo, instala el WAR en el upload del DOMAIN HOME WL
-            WEBLOGIC_HOME: /opt/apps/wl10/wlserver_10.3  #Binarios de WebLogic (WL 10 en adelante)
+            WEBLOGIC_HOME: /opt/Weblogic/wlserver_10.3  #Binarios de WebLogic (WL 10 en adelante) 
+            JB_HOME: /opt/Jboss/bin # Binarios de JBoss (jboss 6.x en adelante)
+            OSB_HOME: /opt/ESB/wlserver # Binarios de ESB (OSB 11g en adelante)
             
 7.- Una vez agregado las variables anteriores en Jenkins, ya podemos proceder a crear Jobs en Jenkins, en el cual lo veremos en el
     siguiente tema.
@@ -133,6 +162,8 @@ Debemos tener presente que los Jobs utilizan las siguientes partes:
           NombreDelComponenteWAR: ExampleWAR.war
           Ambiente: QA
           WL son las siglas de WebLogic
+          JB son las siglas para JBoss
+          OSB son las siglas para Oracle Services Bus
           
           El nombre que llevará el job es: ExampleWAR_QA_WL
           
