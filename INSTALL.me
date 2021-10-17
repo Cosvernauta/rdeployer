@@ -33,7 +33,7 @@ Jenkins:
 
 rdeployer.sh        -   Shell principal que realiza todo el deployado.
 util/xmlUtil.io     -   Sistema sh que permite leer el archivo consoles.xml, en el cual es donde almacenamos nuestros usuarios y passwords (deprecated)
-util/xmlUtil2.io    -   Sistem sh que permite leer el archivo consoles.xml, nueva version ahora leyendo de forma nativa el xml.
+util/xmlUtil2.io    -   Sistema sh que permite leer el archivo consoles.xml, nueva version ahora leyendo de forma nativa el xml.
 conf/consoles.xml   -   Archivo XML donde almacenamos usuarios y passwords de las consolas Weblogics, para acceder a ellas y deployar.
 conf/rdeployer.conf -   Archivo de configuración para rdeployer (versión 3.1.x en adelante)
 conf/plantilla.conf -   Archivo de configuración, usado para configuraciones necesarias en cada componente.
@@ -94,6 +94,7 @@ Example/DeployExample.start
     Ejecutar el comando: ln -s ../rdeployer.sh Clock.start
     Copiar archivo conf: cp -rp ../conf/plantilla.conf Clock.conf
     Editar el archivo conf y llenar las variables que se piden.
+    
 5.- Datos de consola - OSB/JBoss/Weblogic    
 
 5.1- Weblogic.
