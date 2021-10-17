@@ -1,0 +1,30 @@
+ROADMAP rdeployer-plugin para JK
+
+# Rev.  1.5.10 - 240418-0154
+#       1.5.11 - 310518-2005
+#       1.5.12 - 190618-0057
+#       1.5.14 - 030718-0000
+#       1.5.17 - 190818-0957
+#       1.5.20 - 110119-0528
+#       2.0.0  - 020219-2006
+#       2.0.1  - 230319-1528
+#       2.0.2  - 220519-1703
+#       2.0.3  - 200719-0023
+#       2.0.7  - 070919-1736
+#       2.0.8  - 120919-1104 - Off/Deploy/On
+#       2.0.9  - 011019-0826 - Modulo Start/Stop
+#       2.1.0  - 101019-1211 - Stop validacion
+#       2.1.1  - 111110-1745 - Check App Installed
+#       2.1.3  - 121119-1015 - Issue en EstructuraRB
+#       2.1.4  - 080320-2358 - Issue EstructuraNew
+	3.0			Implementacion del modulo para JBoss Domain
+#       3.0.2  - 260520-1157 - JBoss plugin and xmlUtil v 2.0
+#       3.0.13 - 300320-1858 - Módulos para JBoss Check/Stop/Start
+#       3.0.13 - 310520-1510 - JB: Se aplica Off/Deploy/On
+#       3.0.14 - 050620-0930 - JB: Se cambia modalidad, se usara Servers Group para Start/Stop
+#       3.0.16 - 120521-0111 - Bug al momento de pasar a PROD
+#       3.0.17 - 140921-0836 - Uso con JK u otros
+	3.1			Implementacion del modulo para Oracle Services Bus (OSB/ESB)
+#       3.1.0  - 270921-0915 - Modulo para desplegar jar en ESB
+#       3.1.3  - 021021-1619 - Errores comunes.
+
