@@ -1,11 +1,30 @@
-<Weblogic>
+<?xml version="1.0" encoding="UTF-8"?>
 <Consoles>
+<Weblogic>
   <Console-target>
-    <node>ExampleNode01</node>
+    <node>ExampleNode01WL</node>
     <host>192.168.0.1</host>
     <port>9001</port>
     <login>admin</login>
     <password>adminexample</password>
   </Console-target>
-</Consoles>
 </Weblogic>
+<JBoss>
+  <Console-target>
+    <node>ExampleNode02JBoss</node>
+    <host>192.168.0.1</host>
+    <port>9001</port>
+    <login>admin</login>
+    <password>adminexample</password>
+  </Console-target>
+</JBoss>
+<ESB>
+  <Console-target>
+    <node>ExampleNode03OSB</node>
+    <host>192.168.0.1</host>
+    <port>9001</port>
+    <login>admin</login>
+    <password>adminexample</password>
+  </Console-target>
+</ESB>
+</Consoles>
