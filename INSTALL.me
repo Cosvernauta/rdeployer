@@ -38,7 +38,7 @@ util/xmlUtil2.io    -   Sistema sh que permite leer el archivo consoles.xml, nue
 conf/consoles.xml   -   Archivo XML donde almacenamos usuarios y passwords de las consolas Weblogics, para acceder a ellas y deployar.
 conf/rdeployer.conf -   Archivo de configuración para rdeployer (versión 3.1.x en adelante)
 conf/plantilla.conf -   Archivo de configuración, usado para configuraciones necesarias en cada componente.
-data/               -   Directorio con un catálogo de errores en Weblogic, rdeployer podrá validar el error que arroje e indicarte la acción o posible solución.
+data/               -   Directorio con un catálogo de errores para Weblogic/JBoss/ESB, rdeployer podrá validar el error que arroje e indicarte la acción o posible solución.
 
 Todos los archivos mencionados, son necesarios para poder realizar los deploy en cada una de las consolas Weblogic que tengamos, por lo cual
 se deben mantener con la estructura mencionada anteriormente. A continuación vamos a indicar los demás archivos que necesitamos y que
@@ -173,37 +173,41 @@ Debemos tener presente que los Jobs utilizan las siguientes partes:
 
 2.- Seleccionamos "proyecto de Estilo libre".
 
-3.- Seleccionamos "Esta ejecución debe parametrizarse"
+3.- Para instalaciones en formato RFC
+3.1- Seleccionamos "Esta ejecución debe parametrizarse"
 
-4.- Añadimos "Parámetro de Cadena", ingresando los siguientes valores:
+3.2- Añadimos "Parámetro de Cadena", ingresando los siguientes valores:
 
       Nombre             RFC
       Valor por defecto	 [Dejar vacío]
       Descripción        Número de RFC para esta ejecución.
       
-5.- Añadimos Parámetro de "Elección", ingresando los siguientes valores:
+3.3.- Añadimos Parámetro de "Elección", ingresando los siguientes valores:
 
       Nombre             TYPEINST
       Opciones           new
                          rollback
       Descripción        Tipo de Instalación.
       
-6.- En la sección "Ejecutar", damos click en "Ejecutar linea de comandos (shell)"
+3.4.- En la sección "Ejecutar", damos click en "Ejecutar linea de comandos (shell)"
 
-7.- Colocamos el path donde se encuentra el archivo start que es el que ejecuta la instalación, ejemplo:
+3.5- Colocamos el path donde se encuentra el archivo start que es el que ejecuta la instalación, ejemplo:
            $APHOME/QA/Clock.start QA
     Donde QA es el directorio del ambiente, Clock.start es el archivo para ejecutar la instalación de un componente llamado Clock y 
     MUY IMPORTANTE, se debe poner después del archivo start el nombre del ambiente al final como parámetro, que debe ser el mismo
     nombre del directorio que se creó.
     
-8.- Damos click en el botón "Avanzado" y en el campo "Exit code to set build unstable", agregamos el valor 4.    
+3.6- Damos click en el botón "Avanzado" y en el campo "Exit code to set build unstable", agregamos el valor 4 (valor usado en el plugin para indicar cuando una instalación está en estado inestable)
     
-9.- Salvamos el proyecto.
+3.7.- Salvamos el proyecto.
 
-9.- Ejecutamos el job para instalación del componente, previamente copiado el componente WAR/EAR en la ruta donde especificamos que
+4.- Para instalaciones sin formato RFC (Estilo NPROD)
+    Para ello, sólo usaremos los pasos 3.4 al 3.7
+    
+5.- Ejecutamos el job para instalación del componente, previamente copiado el componente WAR/EAR en la ruta donde especificamos que
     tomará el archivo en la variable "RTJK" del archivo de configuración.
     
-10.- Disfruta creando tantos jobs como quieras :-)
+6.- Disfruta creando tantos jobs como quieras :-)
    
  
     
