@@ -1,0 +1,5 @@
+ERR1="com.bea.wli.config.component.NotFoundException"
+ERR1=""
+ERR3=""
+SOL="Posible daño en el componente al momento de su compilado, revisar salida de log para mas detalles"
+

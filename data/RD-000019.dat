@@ -1,0 +1,4 @@
+ERR1="Missing JNDI configuration such as undeployed or incorrectly configured JCA Adapter RAR or connection factory"
+ERR1="An error occurred while validating JCA transport endpoint"
+ERR3=""
+SOL="Error en JCA o JNDI no configurado o no encontrado, revisar salida para detalle del JCA/JNDI"

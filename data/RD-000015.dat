@@ -1,0 +1,5 @@
+ERR1="400: Bad Request"
+ERR1="could not be loaded to the server"
+ERR3=""
+SOL="Posible daño en la consola web, revisar log de consola o espacio de Filesystem"
+

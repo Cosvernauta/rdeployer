@@ -1,0 +1,5 @@
+ERR1="java.io.IOException:"
+ERR2="Could not create directory"
+ERR3=""
+SOL="Plugin de ESB no pudo generar sesion en el servidor, posiblemente FileSystem lleno en el HOME de ESB [WL_HOME/osb/configfwk/sessions]"
+

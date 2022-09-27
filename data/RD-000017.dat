@@ -1,0 +1,5 @@
+ERR1="java.io.IOException: No space left on device"
+ERR1=""
+ERR3=""
+SOL="Problemas de espacio en alguna de las instancias de cluster o individuales, o incluso des espacio en servidor de la consola"
+

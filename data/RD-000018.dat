@@ -1,0 +1,5 @@
+ERR1="Another session operation is in progress. Please retry later"
+ERR1=""
+ERR3=""
+SOL="Sesión abierta en ESB, favor de validar que la sesión esté cerrada"
+

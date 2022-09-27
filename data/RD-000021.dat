@@ -1,0 +1,4 @@
+ERR1="WFLYDC0098: The following servers"
+ERR2="execution of remote management operations is not currently available"
+ERR3=""
+SOL="Revisar log, instancia(s) posiblemente no ha levantado correctamente"

@@ -1,0 +1,4 @@
+ERR1="java.rmi.UnmarshalException: java.rmi.UnmarshalException: failed to load return type"
+ERR2="java.lang.ClassNotFoundException: Failed to load class com.bea.wli.sb.util.ResourceDiagnosticLocation"
+ERR3=""
+SOL="Disable the secure mode using "-Dweblogic.servlet.ClasspathServlet.disableSecureMode=true" in Server startup parameters and redeploy."

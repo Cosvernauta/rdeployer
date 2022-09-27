@@ -1,0 +1,5 @@
+ERR1="No such file or directory"
+ERR1="java.io.FileNotFoundException:"
+ERR3=""
+SOL="No se encontró un archivo o componente para deployar en la consola"
+

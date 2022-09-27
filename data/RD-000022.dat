@@ -1,0 +1,4 @@
+ERR1="java.util.zip.ZipException: error in opening zip file"
+ERR2=""
+ERR3=""
+SOL="Problema en la creacion del componente war/ear/jar, favor de validar el componente"
