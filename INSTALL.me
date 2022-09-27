@@ -24,7 +24,12 @@ Algunos prerrequisitos que se deben tener en consideración:
  - El usuario con el que se levantó Jenkins, debe ser el mismo owner para rdeployer.
  - Se debe tener acceso por SSH a los servidores donde estén las consolas WebLogic/JBoss/OSB desde el servidor de Jenkins.
  - Binarios de Weblogic, JBoss y de OSB/ESB.
- - Tener instalado perl-XML-XPath
+ - Tener instalado perl-XML-XPath (Deprecado con xmlUtil2)
+ - ANSI Color para su uso en Jenkins y el plugin rdeployer.
+ - Tener instalado libxml2 (Nueva versión xmlUtil3)
+ Jenkins:
+ - Plugin "Build Name and Description Setter" (Referencia: https://plugins.jenkins.io/build-name-setter/)
+ - Plugin "AnsiColor" (Referencia: https://plugins.jenkins.io/ansicolor/)
 
 
 ESTRUCTURA DE ARCHIVOS.
@@ -35,8 +40,9 @@ Jenkins:
 rdeployer.sh        -   Shell principal que realiza todo el deployado.
 util/xmlUtil.io     -   Sistema sh que permite leer el archivo consoles.xml, en el cual es donde almacenamos nuestros usuarios y passwords (deprecated)
 util/xmlUtil2.io    -   Sistema sh que permite leer el archivo consoles.xml, nueva version ahora leyendo de forma nativa el xml.
+util/xmlUtil3.io    -   Nueva versión de lectura de xml para consoles.xml (rdeployer 4.2.x en adelante).
 conf/consoles.xml   -   Archivo XML donde almacenamos usuarios y passwords de las consolas Weblogics, para acceder a ellas y deployar.
-conf/rdeployer.conf -   Archivo de configuración para rdeployer (versión 3.1.x en adelante)
+conf/rdeployer.conf -   Archivo de configuración para rdeployer (versión 4.2.x en adelante)
 conf/plantilla.conf -   Archivo de configuración, usado para configuraciones necesarias en cada componente.
 data/               -   Directorio con un catálogo de errores para Weblogic/JBoss/ESB, rdeployer podrá validar el error que arroje e indicarte la acción o posible solución.
 
