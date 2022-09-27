@@ -1,6 +1,6 @@
 ROADMAP rdeployer-plugin para JK,UC
 +------+--------+-------------+----------------------------------------------------------------------------------
-	4.2			Plugin XML3Util standard
+	4.2			Plugin xmlUtil3 standard
 # Rev:
 #	4.2.1  - 960922-1515 -  Se agrega xml3util como lector standard.
 #			     -  Se incorpora timeout para conexiones JBoss, configurable en el conf de rdeployer.
