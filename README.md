@@ -3,7 +3,9 @@
 
 # rdeployer
 [ES] Una herramienta en shell, para deployar componentes en Weblogic/Jboss/OSB, usando Jenkins para manejo de Jobs :-)
+
 [EN] A shell's tool, in order to deploy components on Webglogic/JBoss/OSB, using Jenkins with Jobs :-)
+
 
 ROADMAP     -   Seguimiento de la versión de rdeployer
 
