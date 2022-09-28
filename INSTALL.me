@@ -140,7 +140,7 @@ Example/DeployExample.start
     
     - Accesar a la consola de Jenkins.
     - Entrar a "Administrar Jenkins" -> "Configuración del Sistema"
-    - Las variables que debemos agregar son: APHOME, JAVA_HOME, NPROD y WEBLOGIC_HOME. Ejemplos:
+    - Las variables que debemos agregar son: APHOME, JAVA_HOME, NPROD, PluginLauncher y WEBLOGIC_HOME. Ejemplos:
             APHOME: Directorio Home de rdeployer: /directorio/home/rdeployer
             JAVA_HOME: Directorio home de Java: /opt/apps/java/jdk1.8.0_144
             NPROD: 0 #El valor que lleva es 0 y 1:
@@ -149,6 +149,7 @@ Example/DeployExample.start
             WEBLOGIC_HOME: /opt/Weblogic/wlserver_10.3  #Binarios de WebLogic (WL 10 en adelante) 
             JB_HOME: /opt/Jboss/bin # Binarios de JBoss (jboss 6.x en adelante)
             OSB_HOME: /opt/ESB/wlserver # Binarios de ESB (OSB 11g en adelante)
+            PluginLauncher: Jenkins (rdeployer 4.x en adelante, debido a implementación de uso con otros CI/CD)
             
 7.- Una vez agregado las variables anteriores en Jenkins, ya podemos proceder a crear Jobs en Jenkins, en el cual lo veremos en el
     siguiente tema.
