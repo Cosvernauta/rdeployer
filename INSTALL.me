@@ -39,7 +39,7 @@ Jenkins:
 
 rdeployer.sh        -   Shell principal que realiza todo el deployado.
 util/xmlUtil.io     -   Sistema sh que permite leer el archivo consoles.xml, en el cual es donde almacenamos nuestros usuarios y passwords (deprecated)
-util/xmlUtil2.io    -   Sistema sh que permite leer el archivo consoles.xml, nueva version ahora leyendo de forma nativa el xml.
+util/xmlUtil2.io    -   Sistema sh que permite leer el archivo consoles.xml, nueva version ahora leyendo de forma nativa el xml. (deprecated)
 util/xmlUtil3.io    -   Nueva versión de lectura de xml para consoles.xml (rdeployer 4.2.x en adelante).
 conf/consoles.xml   -   Archivo XML donde almacenamos usuarios y passwords de las consolas Weblogics, para acceder a ellas y deployar.
 conf/rdeployer.conf -   Archivo de configuración para rdeployer (versión 4.2.x en adelante)
@@ -75,8 +75,9 @@ COMO INSTALAR.
 
 rdeployer.sh
 util/
-util/xmlUtil.io
-util/xmlUtil2.io
+util/xmlUtil.io (deprecated)
+util/xmlUtil2.io (deprecated)
+util/xmlUtil3.io
 conf/
 conf/consoles.xml
 conf/rdeployer.conf
@@ -118,20 +119,20 @@ Example/DeployExample.start
 5.2.1- Agregar los datos de acceso a la consola JBoss en el archivo consoles.xml, después de la etiqueta <JBoss> y antes de </JBoss> el cual los datos que se piden son:
     <Console-target>
     <node></node>         - Nombre del nodo que se le da a dicha consola, el cual se colocará en la variable NODE del archivo conf
-    <host></host>         - Nombre del hostname o IP de la consola WebLogic.
-    <port></port>         - Puerto de acceso a la consola WebLogic.
-    <login></login>       - Usuario con el que se accede a la consola WebLogic.
-    <password></password> - Password para acceder a la consola WebLogic.
+    <host></host>         - Nombre del hostname o IP de la consola Jboss.
+    <port></port>         - Puerto de acceso a la consola JBoss.
+    <login></login>       - Usuario con el que se accede a la consola JBoss.
+    <password></password> - Password para acceder a la consola JBoss.
     </Console-target>
     
 5.3- Oracle Services bus
 5.3.1- Agregar los datos de acceso a la consola OSB/ESB en el archivo consoles.xml, después de la etiqueta <ESB> y antes de </ESB> el cual los datos que se piden son:
     <Console-target>
     <node></node>         - Nombre del nodo que se le da a dicha consola, el cual se colocará en la variable NODE del archivo conf
-    <host></host>         - Nombre del hostname o IP de la consola WebLogic.
-    <port></port>         - Puerto de acceso a la consola WebLogic.
-    <login></login>       - Usuario con el que se accede a la consola WebLogic.
-    <password></password> - Password para acceder a la consola WebLogic.
+    <host></host>         - Nombre del hostname o IP de la consola ESB/OSB.
+    <port></port>         - Puerto de acceso a la consola ESB/OSB.
+    <login></login>       - Usuario con el que se accede a la consola ESB/OSB.
+    <password></password> - Password para acceder a la consola ESB/OSB.
     </Console-target>
     
 6.- Una vez que se crearon los puntos anteriores para los diferentes componentes que vayamos a deployar, debemos ahora configurar
@@ -163,6 +164,8 @@ Debemos tener presente que los Jobs utilizan las siguientes partes:
 
    - Parámetro de cadena.
    - Parámetro de elección.
+   - ANSICOLOR configurado (Color ANSI Console Output)
+   - Set Build Name.
    - Ejecutar líneas de comandos (shell)
    
 1.- Creamos un Job con el nombre que gusten, con el fin de poder llevar un estándar podemos usar: NombreDelComponente_Ambiente_WL
@@ -195,17 +198,26 @@ Debemos tener presente que los Jobs utilizan las siguientes partes:
                          rollback
       Descripción        Tipo de Instalación.
       
-3.4.- En la sección "Ejecutar", damos click en "Ejecutar linea de comandos (shell)"
+3.4.- Marcar casillas "Set Build Name" y "Color ANSI Console Output" (la última se puede modificar de manera global para todos los Jobs).
+      Para el caso de "Set Build Name" se deben configurar los siguientes:
 
-3.5- Colocamos el path donde se encuentra el archivo start que es el que ejecuta la instalación, ejemplo:
+      Build Name:        ${ENV,var="RFC"} ${ENV,var="TYPEINST"}
+      Build Description  ${FILE,path="version.txt"}
+      
+      Desmarcar "Set build name before build starts"
+      Dejar marcado "Set build name after build ends"
+      
+3.5.- En la sección "Ejecutar", damos click en "Ejecutar linea de comandos (shell)"
+
+3.6- Colocamos el path donde se encuentra el archivo start que es el que ejecuta la instalación, ejemplo:
            $APHOME/QA/Clock.start QA
     Donde QA es el directorio del ambiente, Clock.start es el archivo para ejecutar la instalación de un componente llamado Clock y 
     MUY IMPORTANTE, se debe poner después del archivo start el nombre del ambiente al final como parámetro, que debe ser el mismo
     nombre del directorio que se creó.
     
-3.6- Damos click en el botón "Avanzado" y en el campo "Exit code to set build unstable", agregamos el valor 4 (valor usado en el plugin para indicar cuando una instalación está en estado inestable)
+3.7- Damos click en el botón "Avanzado" y en el campo "Exit code to set build unstable", agregamos el valor 4 (valor usado en el plugin para indicar cuando una instalación está en estado inestable)
     
-3.7.- Salvamos el proyecto.
+3.8.- Salvamos el proyecto.
 
 4.- Para instalaciones sin formato RFC (Estilo NPROD)
     Para ello, sólo usaremos los pasos 3.4 al 3.7
