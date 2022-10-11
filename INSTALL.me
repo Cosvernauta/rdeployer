@@ -68,7 +68,7 @@ archivo .start, usando el ejemplo anterior del componente DeployExample.war:
 DeployExample.conf
 DeployExample.start -> ../rdeployer.sh*
 
-Como tado principal, cuando configuramos la ruta en el conf donde se coloca el componente, si el componente ya está instalado; hay que tomar en cuenta que en los casos de Weblogic debe estar deployado el componente en la misma ruta donde se configura el conf.
+Como dato principal, cuando configuramos la ruta en el conf donde se coloca el componente, si el componente ya está instalado; hay que tomar en cuenta que en los casos de Weblogic debe estar deployado el componente en la misma ruta donde se configura el conf. Este escenario sólo aplica para Weblogic, para casos de JBoss y ESB/OSB no es necesario.
 
 Todos los componentes en la ruta que se le coloque, se crearán archivos link, el cual el archivo se copiará en otra estructura y apuntará mediante link a dicho archivo para un manejo estructurado.
 
