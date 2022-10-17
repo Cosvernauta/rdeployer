@@ -1,0 +1,26 @@
+fnEstructuraRB()
+{
+ msg "Buscando prev en backups para montar como .prev" "INFO"
+ #APWARBCK=$(ssh -q ${IPSRV} "find ${RTINST}/.bck/ -name '${APWAR}.prev.*'" | head -1)
+ APWARBCK=$(ssh -q ${IPSRV} "ls -ltr ${RTINST}/.bck/${APWAR}.prev.*| tail -1")
+
+ msg "Creando comando para borrado de componente actual" "INFO"
+ CMD1="rm -rf ${RTINST}/${APWAR}"
+
+ msg "Creando comando para mover prev como componente actual" "INFO"
+ CMD1="$CMD1;mv ${RTINST}/${APWAR}.prev ${RTINST}/${APWAR}"
+
+ if [ $(echo $APWARBCK | wc -l) -gt 0 ]
+ then
+     APWARBCK=$(echo $APWARBCK | awk '{print $9}')
+     msg "Creando comando para mover backup de prev como componente previo" "INFO"
+     CMD1="$CMD1;mv ${APWARBCK} ${RTINST}/${APWAR}.prev"
+ else
+     msg "No existe un prev en backup para ser montado como .prev, se omite la creación de comando" "WARN"
+ fi
+
+ msg "Ejecutando comandos de estructura:" "INFO"
+ msg "$CMD1" "DEBUG"
+ ssh -q ${IPSRV} "${CMD1}"
+}
+
