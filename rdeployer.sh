@@ -51,7 +51,7 @@ APPLOG=${APNAME}.${BUILD_NUMBER}.log # 230319-1528
 APPID=${APNAME}${BUILD_NUMBER} # 070919-1736
 #[ "${CICD}" == "Jenkins" ] && APPLOG=${APNAME}.${BUILD_NUMBER}.log # 230319-1528 140921-0836
 #[ "${CICD}" == "Jenkins" ] && APPID=${APNAME}${BUILD_NUMBER} || APPID=${APNAME} # 070919-1736 140921-0836
-VERSION="4.2.4"
+VERSION="4.2.7"
 export monthnames=(Invalid Ene Feb Mar Abr May Jun Jul Ago Sep Oct Nov Dic)
 YEAR="$(date '+%Y')"
 MES=${monthnames[${U_MES#0}]}
@@ -76,10 +76,10 @@ TimeOutDeploy=$( expr "${TimeOutDeploy}" "*" 1000 )
 
 #Armamos las opciones para deployar
 CMD="deploy ${RTC}"
-#CMD="$CMD --force"
 ICMD="deployment-info --name=${APWAR}"
 SHA1="ls deployment=${APWAR}"
 OPTIONS="--connect --timeout=${TimeOutDeploy}"
+OPTIONS="$OPTIONS --command-timeout=${TimeOutDeploy}"
 OPTIONS="$OPTIONS --controller=${HOSTURL}"
 OPTIONS="$OPTIONS --user=${USER}"
 OPTIONS="$OPTIONS --password=${PASSWD}"
@@ -120,12 +120,7 @@ fi
 
 if [ $? -gt 0 ]
 then
-    fnError
-    msg "Verificar la salida en el archivo ${APPLOG} en workspace/workdir para más información:" "ERROR"
-    #msg "${LOGURL}ws/${APPLOG}" "LOG" # 070919-1736
-    [ "${TYPEINST}" == "rollback" ] && exit 1 # 190619 Bug detectado, hacia doble rollback cuando la opcion era rollback y fallaba el war en instalarse, se coloca esta línea para que valide el tipo de instalacion.
-    [ "$NPROD" == "0" ] && msg "Aplicando Rollback a la estructura Generada:" "DEBUG"
-    [ "$NPROD" == "0" ] && fnEstructuraRB
+    fnErrorExecute
     #Levantamos el componente apagado.
     fnStartJB
     exit 1
@@ -219,12 +214,7 @@ nohup ${JAVA_HOME}/bin/java -Xms${vMemoryIni} -Xmx${vMemoryMax} -cp ${WEBLOGIC_H
 
 if [ $? -gt 0 ]
 then
-	fnError 
-	msg "Verificar la salida en el archivo ${APPLOG} en workspace para más información:" "ERROR"
-	#msg "${LOGURL}ws/${APPLOG}" "LOG" # 070919-1736 
-	[ "${TYPEINST}" == "rollback" ] && exit 1 # 190619 Bug detectado, hacia doble rollback cuando la opcion era rollback y fallaba el war en instalarse, se coloca esta línea para que valide el tipo de instalacion.
-	[ "$NPROD" == "0" ] && msg "Aplicando Rollback a la estructura Generada:" "DEBUG"
-	[ "$NPROD" == "0" ] && fnEstructuraRB 
+	fnErrorExecute
 	#Levantamos el componente apagado.
 	fnStartWL
 	exit 1
@@ -285,12 +275,7 @@ nohup ${ORACLE_HOME}/oracle_common/common/bin/wlst.sh ${APHOME}/util/fnESBmod.py
 
 if [ $? -gt 0 ]
 then
-    fnError
-    msg "Verificar la salida en el archivo ${APPLOG} en workspace para más información:" "ERROR"
-    #msg "${LOGURL}ws/${APPLOG}" "LOG" # 070919-1736
-    [ "${TYPEINST}" == "rollback" ] && exit 1 # 190619 Bug detectado, hacia doble rollback cuando la opcion era rollback y fallaba el war en instalarse, se coloca esta línea para que valide el tipo de instalacion.
-    [ "$NPROD" == "0" ] && msg "Aplicando Rollback a la estructura Generada:" "DEBUG"
-    [ "$NPROD" == "0" ] && fnEstructuraRB
+    fnErrorExecute
     exit 1
 else
         msg "Deploy realizado." "OK"
@@ -382,6 +367,21 @@ fnStartWL()
 
 }
 
+fnCheckInstJB()
+{
+  echo "Host Controller and Servers on JBoss:" >> ${APPLOG}
+  for Grp in ${1}
+  do 
+    for HC in $(${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="ls host=")
+    do
+	grpInfo=$(${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/host=${HC}:resolve-expression-on-domain" | grep ${Grp} | awk '{print $1,$5,$7}'| sed 's/{//g'|sed 's/"//g')
+	echo "${grpInfo}" >> ${APPLOG}
+    done
+  done
+	  
+
+}
+
 fnStopJB() # 300320-1858
 {
  msg "Apagando el componente:" "INFO" # 110119-0528
@@ -401,7 +401,9 @@ fnStopJB() # 300320-1858
 	for Group in ${SRVNAMES/,/ }
 	do
 	  echo "Stop Group Server: $Group" >> ${APPLOG}
-	  if [ "${vJBVerRel}" == "7.2" ]
+	  fnCheckInstJB ${Group}
+
+	  if [ "${vJBVerRel}" == "7.2" -o "${vJBVerRel}" == "7.4" ]
 	  then 
 	    nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/server-group=${Group}:kill-servers" >> ${APPLOG}  2>&1
 	  else	
@@ -447,6 +449,25 @@ else
 fi
 }
 
+fnErrorExecute()
+{
+     fnError
+     msg "Verificar la salida en el archivo ${APPLOG} en workspace/workdir para más información:" "ERROR"
+     #msg "${LOGURL}ws/${APPLOG}" "LOG" # 070919-1736
+     case ${TYPEINST} in
+
+         "rollback")
+                 fnEstructuraTemp # 1010221505
+                 exit 1 # 190619 Bug detectado, hacia doble rollback cuando la opcion era rollback
+                 ;;
+         "new")
+                 [ "$NPROD" == "0" ] && msg "Aplicando Rollback a la estructura Generada:" "DEBUG"
+                 [ "$NPROD" == "0" ] && fnEstructuraRB
+                 ;;
+
+     esac
+}
+
 fnError()
 {
 	for f in $(ls -lad ${APHOME}/data/*.dat|awk '{print $9}')
@@ -486,7 +507,7 @@ fnValida()
 	else
 		msg "Validación exitosa." "OK"
 		msg "$(md5sum ${RTJK}/${APWAR})" "DEBUG"
-		md5sum ${RTJK}/${APWAR} |awk '{print $1}' > version.txt # 240922-1347
+		#md5sum ${RTJK}/${APWAR} |awk '{print $1}' > version.txt # 240922-1347
 	fi
 
 	if [ "${NRFC}" == "" ] && [ $NPROD != 1 ]
@@ -617,6 +638,16 @@ msg "Se termina ejecución" "OK"
 
 }
 
+fnEstructuraTemp()
+{
+  CMD1="rm -rf ${RTINST}/${APWAR}"
+  CMD1="$CMD1;rm -rf ${RTINST}/${APWAR}.prev"
+  CMD1="$CMD1;mv ${RTINST}/r_temp/* ${RTINST}/."
+  CMD1="$CMD1;rmdir ${RTINST}/r_temp"
+  msg "$CMD1" "DEBUG"
+  ssh -q ${IPSRV} "${CMD1}"
+}
+
 fnEstructuraRB()
 {
 msg "Buscando prev en backups para montar como .prev" "INFO"
@@ -624,7 +655,10 @@ msg "Buscando prev en backups para montar como .prev" "INFO"
 APWARBCK=$(ssh -q ${IPSRV} "ls -ltr ${RTINST}/.bck/${APWAR}.prev.*| tail -1")
 
 msg "Creando comando para borrado de componente actual" "INFO"
-CMD1="rm -rf ${RTINST}/${APWAR}"
+CMD1="[ -d ${RTINST}/r_temp ] && rm -rf ${RTINST}/r_temp"
+CMD1="$CMD1;mkdir ${RTINST}/r_temp"
+CMD1="$CMD1;mv ${RTINST}/${APWAR} ${RTINST}/r_temp/."
+CMD1="$CMD1;cp -rp ${RTINST}/${APWAR}.prev ${RTINST}/r_temp/."
 
 msg "Creando comando para mover prev como componente actual" "INFO"
 CMD1="$CMD1;mv ${RTINST}/${APWAR}.prev ${RTINST}/${APWAR}"
