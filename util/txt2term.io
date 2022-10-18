@@ -44,12 +44,14 @@ fnFirma() #Funcion para desplegar la firma del componente, obtiene la firma de l
            # 110119-0528 Valida si es Linux, en caso contrario usa openssl
            echo "[ ${IPSRV} | ${hostn} ] ${RTINST}"
            ssh -q ${IPSRV} "[ "$(uname -s)" = "Linux" ] && echo '${USRSO} $ md5sum ${vCOMP}*;ls -lad ${vCOMP}*' || echo 'openssl dgst -md5 ${vCOMP}*'"
-           ssh -q ${IPSRV} "[ "$(uname -s)" = "Linux" ] && md5sum ${vCOMP}* || openssl dgst -md5 ${vCOMP}*"
+           ssh -q ${IPSRV} "[ "$(uname -s)" = "Linux" ] && md5sum ${vCOMP}* || openssl dgst -md5 ${vCOMP}*" | tee v.tmp # 240922-1347
+	   cat v.tmp | head -1 > version.txt
+	   rm -rf v.tmp
            [ "${AutoColorOutPut}" = true ] && ssh -q ${IPSRV} "ls -lad ${vCOMP}*" | awk '{print "\033[32m"$0"\033[0m"}' || ssh -q ${IPSRV} "ls -lad ${vCOMP}*" | awk '{print $0}'
         fi
         done
 
-        if [ "$1" == "1" ]
+        if [ $1 -eq 1 ]
         then
           echo "[ $USRSO | $HOSTNAME ] ${RTINST}"
           echo "$USRSO $ date"
@@ -67,6 +69,5 @@ fnFirma() #Funcion para desplegar la firma del componente, obtiene la firma de l
 #        printf "+-----------------------------------------------------------------------------------------------------------------------------------+\n"
         printf "$BarinColor\n| <F1>Menú   | <F2>Copy Prompt Terminal      | <F3>Paste Prompt Terminal     | <BloqMay>=Inactive \t\t\t$BarnoColor\n"
 #        printf "+-----------------------------------------------------------------------------------------------------------------------------------+\n"
-
 }
 
