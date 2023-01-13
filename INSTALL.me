@@ -38,13 +38,15 @@ A continuación, vamos a indicar los archivos que se utilizan para crear la estr
 Jenkins:
 
 rdeployer.sh        -   Shell principal que realiza todo el deployado.
-util/xmlUtil.io     -   Sistema sh que permite leer el archivo consoles.xml, en el cual es donde almacenamos nuestros usuarios y passwords (deprecated)
-util/xmlUtil2.io    -   Sistema sh que permite leer el archivo consoles.xml, nueva version ahora leyendo de forma nativa el xml. (deprecated)
+util/xmlUtil.io*     -   Sistema sh que permite leer el archivo consoles.xml, en el cual es donde almacenamos nuestros usuarios y passwords (deprecated)
+util/xmlUtil2.io*    -   Sistema sh que permite leer el archivo consoles.xml, nueva version ahora leyendo de forma nativa el xml. (deprecated)
 util/xmlUtil3.io    -   Nueva versión de lectura de xml para consoles.xml (rdeployer 4.2.x en adelante).
 conf/consoles.xml   -   Archivo XML donde almacenamos usuarios y passwords de las consolas Weblogics, para acceder a ellas y deployar.
 conf/rdeployer.conf -   Archivo de configuración para rdeployer (versión 4.2.x en adelante)
 conf/plantilla.conf -   Archivo de configuración, usado para configuraciones necesarias en cada componente.
 data/               -   Directorio con un catálogo de errores para Weblogic/JBoss/ESB, rdeployer podrá validar el error que arroje e indicarte la acción o posible solución.
+
+* - Deprecados para las nuevas versiones.
 
 Todos los archivos mencionados, son necesarios para poder realizar los deploy en cada una de las consolas Weblogic que tengamos, por lo cual
 se deben mantener con la estructura mencionada anteriormente. A continuación vamos a indicar los demás archivos que necesitamos y que
