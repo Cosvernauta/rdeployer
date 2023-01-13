@@ -403,7 +403,8 @@ fnStopJB() # 300320-1858
 	  echo "Stop Group Server: $Group" >> ${APPLOG}
 	  fnCheckInstJB ${Group}
 
-	  if [ "${vJBVerRel}" == "7.2" -o "${vJBVerRel}" == "7.4" ]
+	  if [ $(echo "${vJBVerRel} >= 7.2" | bc) -eq 1 ] # 120123-2011
+	  #if [ "${vJBVerRel}" == "7.2" -o "${vJBVerRel}" == "7.4" ]
 	  then 
 	    nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/server-group=${Group}:kill-servers" >> ${APPLOG}  2>&1
 	  else	
@@ -497,7 +498,7 @@ fnError()
 }
 fnValida()
 {
-	msg "Validando que exista componente en la ruta de JK:" "INFO"	
+	msg "Validando que exista componente en la ruta repositorio:" "INFO"	
 	
 	if [ ! -f ${RTJK}/${APWAR} ]
 	then
