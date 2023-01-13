@@ -1,51 +1,53 @@
 ROADMAP rdeployer-plugin para JK,UC
 +------+--------+--------------+----------------------------------------------------------------------------------------
- TYPE   VERSION  IMPLEMENTACION DESCRIPCION
+ TYPE   VERSION  IMPLEMENTACION	DESCRIPCION
 +------+--------+--------------+----------------------------------------------------------------------------------------
-        4.2                     Modulo xmlUtil3.io standard
+	4.2			Modulo xmlUtil3.io standard
 # Rev:
-#       4.2.1  - 960922-1515 -  (New) Se agrega xmlUtil3 como lector standard.
-#                            -  (New) Se incorpora timeout para conexiones JBoss, configurable en el conf de rdeployer.
-#                            -  (New) ANSICOLOR ahora se puede desactivar en conf.
+#	4.2.1  - 960922-1515 -  (New) Se agrega xmlUtil3 como lector standard.
+#			     -  (New) Se incorpora timeout para conexiones JBoss, configurable en el conf de rdeployer.
+#			     -  (New) ANSICOLOR ahora se puede desactivar en conf.
 #
-#       4.2.2  - 140922-0120 -  (Bug) Dependencia cuando es Rollback, de revisar componente, por lo cual ya no
-#                               revisará si el componente existe en situaciones de RB.
+#	4.2.2  - 140922-0120 - 	(Bug) Dependencia cuando es Rollback, de revisar componente, por lo cual ya no 
+#				revisará si el componente existe en situaciones de RB.
 #
-#       4.2.4  - 240922-1347 -  (Bug) Módulo JBoss al momento de stop y start.
-#                            -  (New) Impresión de firma en txt, para complemento con Jenkins,
-#                               usando un plugin llamado "Build Name and Description Setter".
+#	4.2.4  - 240922-1347 -  (Bug) Módulo JBoss al momento de stop y start.
+#			     -  (New) Impresión de firma en txt, para complemento con Jenkins,
+#				usando un plugin llamado "Build Name and Description Setter".
 #
-#       4.2.6  - 101022-1535 -  (Bug) Modulo para problemas con rollbacks con error, se crea temp para los puntos
-#                               de montaje de cada componente. fnErrorExecute, fnEstructuraTemp
+#	4.2.6  - 101022-1535 -  (Bug) Modulo para problemas con rollbacks con error, se crea temp para los puntos
+#				de montaje de cada componente. fnErrorExecute, fnEstructuraTemp
 #
-#       4.2.7  - 101022-2000 -  (New) Funcion para obtener servers o instancias a nivel JBoss.
+#	4.2.7  - 101022-2000 -  (New) Funcion para obtener servers o instancias a nivel JBoss.
 #
-#       4.2.x  -             -  (Dev) Construir modulo fnValidaEstructuraRB para prev con FIX.
-#                            -  (Dev) Checar estructura de xml, cuando es por RFC su instalacion.
-#                            -  (Dev) Programacion de URL usando la que despliega JK en el plugin.
+#	4.2.8  - 120123-2011 -  (Fix) Se adecua intepretacion de JBoss 7.2 en adelante, para modos kill.
+#
+#	4.2.x  - 	     -  (Dev) Construir modulo fnValidaEstructuraRB para prev con FIX.
+#       	             -  (Dev) Checar estructura de xml, cuando es por RFC su instalacion.
+#               	     -  (Dev) Programacion de URL usando la que despliega JK en el plugin.
 
-        4.1                     Plugin Launcher compatibilidad con UrbanCode
+	4.1			Plugin Launcher compatibilidad con UrbanCode
 # Rev:
 #       4.1.0  - 070622-1653 - Compatibilidad ahora con UrbanCode y Jenkins.
-#       4.1.1  - 280622-1457 - Upgrade sobre el workspace/workdir en UC y JK
+#	4.1.1  - 280622-1457 - Upgrade sobre el workspace/workdir en UC y JK
 
-        4.0                     Plugin con uso de ANSICOLOR - disable/enable config
+	4.0			Plugin con uso de ANSICOLOR - disable/enable config
 # Rev:
-#       4.0.2  - 041121-0856 - Opciones de stop para JBoss 7.2 en adelante (método kill)
-#       4.0.4  - 051121-1859 - Se anexan mas catalogos de errores.
-#       4.0.5  - 131121-1708 - Se actualiza modulo de busqueda de Aplicaciones (fnCheckWL)
-#       4.0.8  - 141121-1900 - Parche en la forma de hacer instalaciones con undeploy/deploy
-#       4.0.10 - 171121-0900 - Control sobre applist (fnCheckWL) en el conf de rdeployer
-#                              y nuevo formato de rdeployer.conf
-#       4.0.15 - 231121-0200 - Issues al pasar a instalacion tipo Ticket/RFC
-#       4.0.16 - 231121-1130 - Si no existe XML, avanza a solo instalacion de JAR en OSB
-#       4.0.17 - 031221-1430 - Nuevo file IO para firmas: txt2term.io V 0.5
-#       4.0.18 - 081221-0524 - Nuevo modulo para RB cuando se instala con OSB
-#       4.0.19 - 131221-0205 - Fix en modulo de ESB, para instalaciones sin XML
-#       4.0.20 - 161221-0324 - Nueva deteccion de errores de xmlUtil2 en rdeployer
-#       4.0.21 - 020322-1713 - Cambios menores en parámetros para JBoss
-#       4.0.22 - 110522-1432 - Se anexan campos en rdeployer.conf para configurar dominios
-#       4.0.23 - 060622-1836 - Se coloca opcion de deshabilitar ANSICOLOR en el plugin en conf
+#	4.0.2  - 041121-0856 - Opciones de stop para JBoss 7.2 en adelante (método kill)
+#	4.0.4  - 051121-1859 - Se anexan mas catalogos de errores.
+#	4.0.5  - 131121-1708 - Se actualiza modulo de busqueda de Aplicaciones (fnCheckWL)
+#	4.0.8  - 141121-1900 - Parche en la forma de hacer instalaciones con undeploy/deploy
+#	4.0.10 - 171121-0900 - Control sobre applist (fnCheckWL) en el conf de rdeployer
+#			       y nuevo formato de rdeployer.conf
+#	4.0.15 - 231121-0200 - Issues al pasar a instalacion tipo Ticket/RFC
+#	4.0.16 - 231121-1130 - Si no existe XML, avanza a solo instalacion de JAR en OSB
+#	4.0.17 - 031221-1430 - Nuevo file IO para firmas: txt2term.io V 0.5
+#	4.0.18 - 081221-0524 - Nuevo modulo para RB cuando se instala con OSB
+#	4.0.19 - 131221-0205 - Fix en modulo de ESB, para instalaciones sin XML
+#	4.0.20 - 161221-0324 - Nueva deteccion de errores de xmlUtil2 en rdeployer
+#	4.0.21 - 020322-1713 - Cambios menores en parámetros para JBoss
+#	4.0.22 - 110522-1432 - Se anexan campos en rdeployer.conf para configurar dominios
+#	4.0.23 - 060622-1836 - Se coloca opcion de deshabilitar ANSICOLOR en el plugin en conf
 
         3.1                     Implementacion del modulo para Oracle Services Bus (OSB/ESB)
 # Rev:
@@ -77,9 +79,9 @@ ROADMAP rdeployer-plugin para JK,UC
 #       2.1.3  - 121119-1015 - Issue en EstructuraRB
 #       2.1.4  - 080320-2358 - Issue EstructuraNew
 
-        1.5                     rdeployer para Weblogic
+	1.5			rdeployer para Weblogic
 # Rev:
-#       1.5.10 - 240418-0154
+#   	1.5.10 - 240418-0154
 #       1.5.11 - 310518-2005
 #       1.5.12 - 190618-0057
 #       1.5.14 - 030718-0000
