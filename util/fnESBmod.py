@@ -48,7 +48,9 @@ def importToALSBDomain(importConfigFile):
             alsbJarInfo = ALSBConfigurationMBean.getImportJarInfo()
             alsbImportPlan = alsbJarInfo.getDefaultImportPlan()
             alsbImportPlan.setPassphrase(passphrase)
-            alsbImportPlan.setPreserveExistingEnvValues(true)
+            #alsbImportPlan.setPreserveExistingEnvValues(true)
+            alsbImportPlan.isPreserveExistingCredentials(true)
+            alsbImportPlan.isPreserveExistingSecurityAndPolicyConfig(true)
             importResult = ALSBConfigurationMBean.importUploaded(alsbImportPlan)
             SessionMBean.activateSession(sessionName, "Complete test import with customization using wlst")
         else:
@@ -62,8 +64,10 @@ def importToALSBDomain(importConfigFile):
             print 'Default importPlan'
             printOpMap(operationMap)
             set = operationMap.entrySet()
- 
+            
+            #print 'PreserveExistingEnvValues', alsbImportPlan.isPreserveExistingCredentials
             alsbImportPlan.setPreserveExistingEnvValues(true)
+            alsbImportPlan.setPreserveExistingCredentials(true)
  
             #boolean
             abort = false
@@ -182,6 +186,7 @@ def readBinaryFile(fileName):
 def createSessionName():
     #sessionName = String("Jenkins Deploy #"+Long(System.currentTimeMillis()).toString())
     sessionName = String("SessionJK"+Long(System.currentTimeMillis()).toString())
+    #sessionName = String("SessionJK"+RFC)
     return sessionName
  
 #=======================================================================================
@@ -206,6 +211,7 @@ try:
     customizationFile=sys.argv[5]
     customFile=sys.argv[5]
     passphrase=sys.argv[6]
+    RFC=sys.argv[7]
     #passphrase="" 
     print passphrase
     project=sys.argv[7]

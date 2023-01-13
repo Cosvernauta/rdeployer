@@ -29,7 +29,9 @@ fnFirma() #Funcion para desplegar la firma del componente, obtiene la firma de l
            USRSO=$(whoami)
            echo "[ $USRSO | $HOSTNAME ] ${RTINST}"
            echo "${USRSO} $ md5sum ${vCOMP};ls -lad ${vCOMP}"
-           md5sum ${vCOMP}
+           md5sum ${vCOMP} | tee v.tmp # 240922-1347
+	   cat v.tmp | head -1 > version.txt
+	   rm -rf v.tmp
            [ "${AutoColorOutPut}" = true ] && ls -lad ${vCOMP} | awk '{print "\033[32m"$0"\033[0m"}' || ls -lad ${vCOMP} | awk '{print $0}'
            #echo "[ $USRSO | $HOSTNAME ] ${RTINST}"
            #echo "$USRSO $ date"

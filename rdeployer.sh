@@ -51,7 +51,7 @@ APPLOG=${APNAME}.${BUILD_NUMBER}.log # 230319-1528
 APPID=${APNAME}${BUILD_NUMBER} # 070919-1736
 #[ "${CICD}" == "Jenkins" ] && APPLOG=${APNAME}.${BUILD_NUMBER}.log # 230319-1528 140921-0836
 #[ "${CICD}" == "Jenkins" ] && APPID=${APNAME}${BUILD_NUMBER} || APPID=${APNAME} # 070919-1736 140921-0836
-VERSION="4.2.7"
+VERSION="4.2.8"
 export monthnames=(Invalid Ene Feb Mar Abr May Jun Jul Ago Sep Oct Nov Dic)
 YEAR="$(date '+%Y')"
 MES=${monthnames[${U_MES#0}]}
@@ -403,7 +403,8 @@ fnStopJB() # 300320-1858
 	  echo "Stop Group Server: $Group" >> ${APPLOG}
 	  fnCheckInstJB ${Group}
 
-	  if [ "${vJBVerRel}" == "7.2" -o "${vJBVerRel}" == "7.4" ]
+	  if [ $(echo "${vJBVerRel} >= 7.2" | bc) -eq 1 ] # 120123-2011
+	  #if [ "${vJBVerRel}" == "7.2" -o "${vJBVerRel}" == "7.4" ]
 	  then 
 	    nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/server-group=${Group}:kill-servers" >> ${APPLOG}  2>&1
 	  else	
@@ -497,7 +498,7 @@ fnError()
 }
 fnValida()
 {
-	msg "Validando que exista componente en la ruta de JK:" "INFO"	
+	msg "Validando que exista componente en la ruta repositorio:" "INFO"	
 	
 	if [ ! -f ${RTJK}/${APWAR} ]
 	then
@@ -700,13 +701,24 @@ fi
 msg "Componentes validados." "OK"
 
 }
+fnValidateFile()
+{
+  FileVal=$1
+  
+  if [ ! -f ${FileVal} ]; then
+  msg "No existe Archivo ${FileVal}, favor de validar" "ERROR"
+  else
+	msg "${FileVal} correcto" "OK"
+  fi
 
+}
 
 fnGetConsole()
 {
 #Vamos a obtener el usuario, password, ip y puerto de la consola bajo archivo XML
 #CONN="$(${APHOME}/util/xmlUtil.io ${APHOME}/conf ${NODE})"
 xUTIL=xmlUtil3  #260520-1157
+fnValidateFile ${APHOME}/util/${xUTIL}.io
 msg "Versión XML Util: ${xUTIL}" "INFO" #260520-1157
 CONN="$(${APHOME}/util/${xUTIL}.io ${APHOME}/conf ${NODE} $1)"
 
