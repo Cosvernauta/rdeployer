@@ -9,18 +9,23 @@ ROADMAP rdeployer-plugin para JK,UC
 #			     -  (New) ANSICOLOR ahora se puede desactivar en conf.
 #
 #	4.2.2  - 140922-0120 - 	(Bug) Dependencia cuando es Rollback, de revisar componente, por lo cual ya no 
-#				revisará si el componente existe en situaciones de RB.
+#				      revisará si el componente existe en situaciones de RB.
 #
 #	4.2.4  - 240922-1347 -  (Bug) Módulo JBoss al momento de stop y start.
 #			     -  (New) Impresión de firma en txt, para complemento con Jenkins,
-#				usando un plugin llamado "Build Name and Description Setter".
+#				      usando un plugin llamado "Build Name and Description Setter".
 #
 #	4.2.6  - 101022-1535 -  (Bug) Modulo para problemas con rollbacks con error, se crea temp para los puntos
-#				de montaje de cada componente. fnErrorExecute, fnEstructuraTemp
+#				      de montaje de cada componente. fnErrorExecute, fnEstructuraTemp
 #
 #	4.2.7  - 101022-2000 -  (New) Funcion para obtener servers o instancias a nivel JBoss.
 #
 #	4.2.8  - 120123-2011 -  (Fix) Se adecua intepretacion de JBoss 7.2 en adelante, para modos kill.
+#
+#	4.2.9  - 210323-1151 -  (Fix) Se realiza validacion que existan los plugins de cada uno (Weblogic/ESB/Jboss)
+#			     -  (New) Imprime las instancias cuando no estan disponibles para Weblogic como WARN.
+#		 250423-1837 -  (Fix) Cuando componente coincida con el prev, se omite su instalacion y solo 
+#				      se ejecutara el deploy.
 #
 #	4.2.x  - 	     -  (Dev) Construir modulo fnValidaEstructuraRB para prev con FIX.
 #       	             -  (Dev) Checar estructura de xml, cuando es por RFC su instalacion.

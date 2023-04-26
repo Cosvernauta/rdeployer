@@ -32,6 +32,8 @@ U_HOUR="$(date '+%H%M')"
 U_DATE="$(date '+%Y%m%d')"
 U_TIME="${U_DATE}${U_HOUR}"
 U_MES="$(date '+%m')"
+>version.txt # Inicializando, para cualquier tipo de error en primera ejecución.
+
 if [ "${PluginLauncher}" == "UrbanCode" ]
 then
 	if [ -f BNUMBER.prc ] 
@@ -51,7 +53,7 @@ APPLOG=${APNAME}.${BUILD_NUMBER}.log # 230319-1528
 APPID=${APNAME}${BUILD_NUMBER} # 070919-1736
 #[ "${CICD}" == "Jenkins" ] && APPLOG=${APNAME}.${BUILD_NUMBER}.log # 230319-1528 140921-0836
 #[ "${CICD}" == "Jenkins" ] && APPID=${APNAME}${BUILD_NUMBER} || APPID=${APNAME} # 070919-1736 140921-0836
-VERSION="4.2.8"
+VERSION="4.2.9"
 export monthnames=(Invalid Ene Feb Mar Abr May Jun Jul Ago Sep Oct Nov Dic)
 YEAR="$(date '+%Y')"
 MES=${monthnames[${U_MES#0}]}
@@ -228,6 +230,9 @@ else
 	if [ ${WARNG} -gt 0 ]
 	then
 	    msg "Se encontraron que algunas instancias no estaban disponibles, checar salida del log en la url anteriormente mostrada" "WARN"
+	    WARNINST=$(grep "Unable to contact" ${APPLOG}| awk '{print $5}'|sort|uniq) # 210323-1151
+	    msg "Instancias con problemas:" "WARN"
+	    msg "${WARNINST}" "WARN"
 	    vEXIT=4
 	fi
 	#[ "$NPROD" == "1" ] && RTINST=$(dirname $(grep "Starting task with path" ${APPLOG} | awk -F":" '{print $4}'))	
@@ -375,7 +380,7 @@ fnCheckInstJB()
     for HC in $(${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="ls host=")
     do
 	grpInfo=$(${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/host=${HC}:resolve-expression-on-domain" | grep ${Grp} | awk '{print $1,$5,$7}'| sed 's/{//g'|sed 's/"//g')
-	echo "${grpInfo}" >> ${APPLOG}
+	echo "${grpInfo}" | grep .. >> ${APPLOG}
     done
   done
 	  
@@ -526,7 +531,7 @@ msg "Validando variables de entorno Jenkins:" "INFO"
 
 if [ -z ${WEBLOGIC_HOME} ] && [ -z ${APHOME} ] && [ -z ${JB_HOME} ] && [ -z ${OSB_HOME} ] && [ -z ${NPROD} ] && [ -z ${JAVA_HOME} ]
 then
-  msg "No esta configurado Plugin rdeployer correctamente en Jenkins" "ERROR"
+  msg "No esta configurado Plugin rdeployer correctamente en ${PluginLauncher}" "ERROR"
   exit 1
 else
   msg "Variables set correctamente." "OK"
@@ -598,44 +603,51 @@ fi
 fnEstructuraNew()
 {
 vCOMP=$1
-RUTA_COPIA="${RTINST}/${YEAR}/${MES}/${NRFC}"
-msg "Creando comando para estructura de directorios:" "INFO"
-msg "${RTINST}" "DEBUG"
-msg "${YEAR}" "DEBUG"
-msg "${MES}" "DEBUG"
-CMD1="mkdir -p ${RUTA_COPIA}"
-ssh -q ${IPSRV} "${CMD1}"
-# 080320-2358 Se actualiza la forma de estructura con mas validaciones.
-msg "Creando comando para mover instalación que exista:" "INFO"
-msg "backup ${RTINST}/${vCOMP}.prev" "DEBUG"
-CMD1="[ ! -d ${RTINST}/.bck ] && mkdir ${RTINST}/.bck"
-CMD1="$CMD1;[ -f ${RTINST}/${vCOMP}.prev ] && mv ${RTINST}/${vCOMP}.prev ${RTINST}/.bck/${vCOMP}.prev.${U_TIME}"
-msg "backup ${RTINST}/${vCOMP}" "DEBUG"
-CMD1="$CMD1;[ -f ${RTINST}/${vCOMP} ] && cp -rp ${RTINST}/${vCOMP} ${RTINST}/${vCOMP}.prev"
-CMD1="$CMD1;[ -d ${RTINST}/.bck ] && ls -ltr ${RTINST}/.bck/${vCOMP}.prev.${U_TIME}"
-CMD1="$CMD1;[ -f ${RTINST}/${vCOMP}.prev ] && ls -ltr ${RTINST}/${vCOMP}.prev"
+vFirmaActual=$(ssh -q ${IPSRV} "md5sum ${RTINST}/${vCOMP}" | awk '{print $1}') #250423-1837
+vFirmaNewComponente=$(md5sum ${RTJK}/${vCOMP} | awk '{print $1}') #250423-1837
 
-msg "Creando comando para punto de montaje como liga suave:" "INFO"
-msg "remove ${RTINST}/${vCOMP}" "DEBUG"
-CMD1="$CMD1;[ -f ${RTINST}/${vCOMP} ] && rm -rf ${RTINST}/${vCOMP}"
-msg "link ${RUTA_COPIA}/${vCOMP} ${RTINST}/${vCOMP}" "DEBUG"
-CMD1="$CMD1;ln -s ${RUTA_COPIA}/${vCOMP} ${RTINST}/${vCOMP}"
+if [ "${vFirmaActual}" != "${vFirmaNewComponente}" ]; then #250423-1837
+  RUTA_COPIA="${RTINST}/${YEAR}/${MES}/${NRFC}"
+  msg "Creando comando para estructura de directorios:" "INFO"
+  msg "${RTINST}" "DEBUG"
+  msg "${YEAR}" "DEBUG"
+  msg "${MES}" "DEBUG"
+  CMD1="mkdir -p ${RUTA_COPIA}"
+  ssh -q ${IPSRV} "${CMD1}"
+  # 080320-2358 Se actualiza la forma de estructura con mas validaciones.
+  msg "Creando comando para mover instalación que exista:" "INFO"
+  msg "backup ${RTINST}/${vCOMP}.prev" "DEBUG"
+  CMD1="[ ! -d ${RTINST}/.bck ] && mkdir ${RTINST}/.bck"
+  CMD1="$CMD1;[ -f ${RTINST}/${vCOMP}.prev ] && mv ${RTINST}/${vCOMP}.prev ${RTINST}/.bck/${vCOMP}.prev.${U_TIME}"
+  msg "backup ${RTINST}/${vCOMP}" "DEBUG"
+  CMD1="$CMD1;[ -f ${RTINST}/${vCOMP} ] && cp -rp ${RTINST}/${vCOMP} ${RTINST}/${vCOMP}.prev"
+  CMD1="$CMD1;[ -d ${RTINST}/.bck ] && ls -ltr ${RTINST}/.bck/${vCOMP}.prev.${U_TIME}"
+  CMD1="$CMD1;[ -f ${RTINST}/${vCOMP}.prev ] && ls -ltr ${RTINST}/${vCOMP}.prev"
 
-msg "Copiando el componente en el directorio:" "INFO"
-msg "${RTJK}/${vCOMP}" "DEBUG"
-msg "${IPSRV}:${RUTA_COPIA}/." "DEBUG"
-scp -qrp ${RTJK}/${vCOMP} ${IPSRV}:${RUTA_COPIA}/.
+  msg "Creando comando para punto de montaje como liga suave:" "INFO"
+  msg "remove ${RTINST}/${vCOMP}" "DEBUG"
+  CMD1="$CMD1;[ -f ${RTINST}/${vCOMP} ] && rm -rf ${RTINST}/${vCOMP}"
+  msg "link ${RUTA_COPIA}/${vCOMP} ${RTINST}/${vCOMP}" "DEBUG"
+  CMD1="$CMD1;ln -s ${RUTA_COPIA}/${vCOMP} ${RTINST}/${vCOMP}"
 
-if [ $? -gt 0 ]
-then
-	msg "Error al copiar el componente ${vCOMP}" "ERROR"
+  msg "Copiando el componente en el directorio:" "INFO"
+  msg "${RTJK}/${vCOMP}" "DEBUG"
+  msg "${IPSRV}:${RUTA_COPIA}/." "DEBUG"
+  scp -qrp ${RTJK}/${vCOMP} ${IPSRV}:${RUTA_COPIA}/.
+
+  if [ $? -gt 0 ]
+  then
+  	msg "Error al copiar el componente ${vCOMP}" "ERROR"
 	exit 1
-fi
+  fi
 
-msg "Ejecutando comandos de estructura:" "INFO"
-msg "$CMD1" "DEBUG"
-ssh -q ${IPSRV} "${CMD1}"
-msg "Se termina ejecución" "OK"
+  msg "Ejecutando comandos de estructura:" "INFO"
+  msg "$CMD1" "DEBUG"
+  ssh -q ${IPSRV} "${CMD1}"
+  msg "Se termina ejecución" "OK"
+else
+  msg "Componente tiene misma firma, se omite su copiado" "WARN" #250423-1837
+fi #250423-1837
 
 }
 
@@ -708,7 +720,7 @@ fnValidateFile()
   if [ ! -f ${FileVal} ]; then
   msg "No existe Archivo ${FileVal}, favor de validar" "ERROR"
   else
-	msg "${FileVal} correcto" "OK"
+	msg "${FileVal} seems right!" "DEBUG"
   fi
 
 }
@@ -738,17 +750,11 @@ case "${CONN}" in
 		;;
 esac
 
-#if [ "${CONN}" == "ERROR" ]
-#then
-#        msg "No se puede obtener usuario y password en el archivo de configuracion" "ERROR"
-#        exit 1
-#else
-	msg "Datos de consola encontrados." "OK"
-        USER=$(echo $CONN | awk '{print $1}')
-        PASSWD=$(echo $CONN | awk '{print $2}')
-        IPSRV=$(echo $CONN | awk '{print $3}')
-        PORT=$(echo $CONN | awk '{print $4}')
-#fi
+msg "Datos de consola encontrados." "OK"
+USER=$(echo $CONN | awk '{print $1}')
+PASSWD=$(echo $CONN | awk '{print $2}')
+IPSRV=$(echo $CONN | awk '{print $3}')
+PORT=$(echo $CONN | awk '{print $4}')
 
 export USER
 export PASSWD
@@ -791,11 +797,27 @@ fnPluginInfo() {
 case $1 in
 	"weblogic")
 	echo "===== PLUGIN VERSION =====" >> ${APPLOG}
-	${JAVA_HOME}/bin/java -Xms${vMemoryIni} -Xmx${vMemoryMax} -cp ${WEBLOGIC_HOME}/server/lib/weblogic.jar weblogic.Deployer -version >> ${APPLOG}
+	if [ -f ${WEBLOGIC_HOME}/server/lib/weblogic.jar ]; then
+	  ${JAVA_HOME}/bin/java -Xms${vMemoryIni} -Xmx${vMemoryMax} -cp ${WEBLOGIC_HOME}/server/lib/weblogic.jar weblogic.Deployer -version >> ${APPLOG}
+	else
+	  msg "Plugin no encontrado en la ruta ${WEBLOGIC_HOME}" "ERROR"
+	  exit 1
+	fi
 	
 	if [ $? -gt 0 ]
 	then
 		msg "no se puede cargar plugin, favor de validar salida del log y revisar si existen los binarios" "ERROR"
+		exit 1
+	fi
+			;;
+
+	"jboss") # 210323-1151
+	echo "===== PLUGIN VERSION =====" >> ${APPLOG}
+
+	if [ -f ${JB_HOME}/bin/jboss-cli.sh ]; then
+		msg "JBoss CLI Detected" >> ${APPLOG}
+	else
+		msg "No se encuentra el archivo plugin para Jboss en ${JB_HOME}" "ERROR"
 		exit 1
 	fi
 			;;
@@ -899,6 +921,7 @@ case $DODEPLOY in
 	fnFirma ${NPROD} ${APWAR} # Variable NPROD obtenido de Jenkins
 	;;
  "jboss")
+	fnPluginInfo jboss # 210323-1151
 	msg "Plugin cargado: JBoss_CLI" "INFO"
 	fnGetConsole JBoss
 	[ "$NPROD" == "0" ] && fnTipoEstructuraInstall ${TYPEINST} # 120521-0111
