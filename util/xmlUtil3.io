@@ -2,6 +2,7 @@
 # xmlUtil3.io
 # xmllint - libxml2-utils
 # Version 3.0   - Revisado: 280622-1832
+# Version 3.1	- Revisado: 120423-1844
 RTCON=${1}/consoles.xml
 NOD="$2"
 TYPE=$3
@@ -39,4 +40,9 @@ else
 
 fi
 
-echo "$USR $PASSWD $IP $PORT"
+if [ "${USR}" != "" ];then
+  echo "$USR $PASSWD $IP $PORT"
+else
+  echo "ERR4"
+fi
+
