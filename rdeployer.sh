@@ -36,24 +36,24 @@ U_MES="$(date '+%m')"
 
 if [ "${PluginLauncher}" == "UrbanCode" ]
 then
-	if [ -f BNUMBER.prc ] 
-	then
-		BN=$(cat BNUMBER.prc)
-		BN=$(expr $BN + 1)
-		echo ${BN} > BNUMBER.prc
-		WORKSPACE=${WORKDIR}
-	else
-		echo 1 > BNUMBER.prc
-	fi
+        if [ -f BNUMBER.prc ]
+        then
+                BN=$(cat BNUMBER.prc)
+                BN=$(expr $BN + 1)
+                echo ${BN} > BNUMBER.prc
+                WORKSPACE=${WORKDIR}
+        else
+                echo 1 > BNUMBER.prc
+        fi
 
-	BUILD_NUMBER=$(cat BNUMBER.prc)
+        BUILD_NUMBER=$(cat BNUMBER.prc)
 fi
 
 APPLOG=${APNAME}.${BUILD_NUMBER}.log # 230319-1528
 APPID=${APNAME}${BUILD_NUMBER} # 070919-1736
 #[ "${CICD}" == "Jenkins" ] && APPLOG=${APNAME}.${BUILD_NUMBER}.log # 230319-1528 140921-0836
 #[ "${CICD}" == "Jenkins" ] && APPID=${APNAME}${BUILD_NUMBER} || APPID=${APNAME} # 070919-1736 140921-0836
-VERSION="4.2.9"
+VERSION="4.2.10"
 export monthnames=(Invalid Ene Feb Mar Abr May Jun Jul Ago Sep Oct Nov Dic)
 YEAR="$(date '+%Y')"
 MES=${monthnames[${U_MES#0}]}
@@ -61,7 +61,7 @@ LOGAPHIST="${APNAME}.history"
 NRFC=$(echo ${RFC} | tr -d [:blank:])
 # Se debe configurar en el job 2 variables: TYPEINST y RFC
 #TYPEINST - Parámetro de elección:
-#	    Opciones: new | rollback
+#           Opciones: new | fix | rollback
 #RFC - Parámetro de Cadena
 export ORACLE_HOME=${OSB_HOME}
 export MW_HOME=${ORACLE_HOME}
@@ -85,7 +85,7 @@ OPTIONS="$OPTIONS --command-timeout=${TimeOutDeploy}"
 OPTIONS="$OPTIONS --controller=${HOSTURL}"
 OPTIONS="$OPTIONS --user=${USER}"
 OPTIONS="$OPTIONS --password=${PASSWD}"
-#OPTIONS="$OPTIONS --command-timeout $TimeOutDeploy" 
+#OPTIONS="$OPTIONS --command-timeout $TimeOutDeploy"
 #OPTIONS="$OPTIONS --commands='${SHA1},${ICMD},${CMD},${SHA1}'"
 
 msg "Creando la estructura para deployar:" "INFO"
@@ -107,17 +107,17 @@ sleep 5
 msg "Ejecutando deploy, espere un momento..." "INFO"
 echo "[ $(date) ]" >> ${APPLOG}
 echo "===== INFO/REDEPLOY APP =====" >> ${APPLOG}
-if  $mFORCE 
+if  $mFORCE
 then
-	CMD="$CMD --force"
-	echo "Executing mode force in ${RTC}" >> ${APPLOG}
-	echo "Timeout configured: ${TimeOutDeploy}" >> ${APPLOG}
-	nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --commands="${SHA1},${ICMD},${CMD},${SHA1}" >> ${APPLOG}  2>&1
+        CMD="$CMD --force"
+        echo "Executing mode force in ${RTC}" >> ${APPLOG}
+        echo "Timeout configured: ${TimeOutDeploy}" >> ${APPLOG}
+        nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --commands="${SHA1},${ICMD},${CMD},${SHA1}" >> ${APPLOG}  2>&1
 else
-	echo "Executing mode deploy in ${RTC}" >> ${APPLOG}
-	echo "Timeout configured: ${TimeOutDeploy}" >> ${APPLOG}
-	CMD="$CMD --server-groups=${SRVNAMES}"
-	nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="${CMD}" >> ${APPLOG}  2>&1
+        echo "Executing mode deploy in ${RTC}" >> ${APPLOG}
+        echo "Timeout configured: ${TimeOutDeploy}" >> ${APPLOG}
+        CMD="$CMD --server-groups=${SRVNAMES}"
+        nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="${CMD}" >> ${APPLOG}  2>&1
 fi
 
 if [ $? -gt 0 ]
@@ -129,9 +129,9 @@ then
 else
         msg "Deploy realizado." "OK"
         sleep 5
-	#Detenemos el componente.
-	#fnStopJB
-	#sleep 5
+        #Detenemos el componente.
+        #fnStopJB
+        #sleep 5
         #Levantamos el componente.
         fnStartJB
 fi
@@ -216,28 +216,28 @@ nohup ${JAVA_HOME}/bin/java -Xms${vMemoryIni} -Xmx${vMemoryMax} -cp ${WEBLOGIC_H
 
 if [ $? -gt 0 ]
 then
-	fnErrorExecute
-	#Levantamos el componente apagado.
-	fnStartWL
-	exit 1
+        fnErrorExecute
+        #Levantamos el componente apagado.
+        fnStartWL
+        exit 1
 else
-	msg "Deploy realizado." "OK"
-	sleep 5
-	#WARNG=$(grep "Unable to contact" ${WORKSPACE}/${APPLOG}|wc -l)
-	WARNG=$(grep "Unable to contact" ${APPLOG}|wc -l)
-	#WARNG=$(grep "Target state: start failed on Server" ${WORKSPACE}/${APPLOG}|wc -l)
+        msg "Deploy realizado." "OK"
+        sleep 5
+        #WARNG=$(grep "Unable to contact" ${WORKSPACE}/${APPLOG}|wc -l)
+        WARNG=$(grep "Unable to contact" ${APPLOG}|wc -l)
+        #WARNG=$(grep "Target state: start failed on Server" ${WORKSPACE}/${APPLOG}|wc -l)
 
-	if [ ${WARNG} -gt 0 ]
-	then
-	    msg "Se encontraron que algunas instancias no estaban disponibles, checar salida del log en la url anteriormente mostrada" "WARN"
-	    WARNINST=$(grep "Unable to contact" ${APPLOG}| awk '{print $5}'|sort|uniq) # 210323-1151
-	    msg "Instancias con problemas:" "WARN"
-	    msg "${WARNINST}" "WARN"
-	    vEXIT=4
-	fi
-	#[ "$NPROD" == "1" ] && RTINST=$(dirname $(grep "Starting task with path" ${APPLOG} | awk -F":" '{print $4}'))	
-	#Levantamos el componente.
-	fnStartWL
+        if [ ${WARNG} -gt 0 ]
+        then
+            msg "Se encontraron que algunas instancias no estaban disponibles, checar salida del log en la url anteriormente mostrada" "WARN"
+            WARNINST=$(grep "Unable to contact" ${APPLOG}| awk '{print $5}'|sort|uniq) # 210323-1151
+            msg "Instancias con problemas:" "WARN"
+            msg "${WARNINST}" "WARN"
+            vEXIT=4
+        fi
+        #[ "$NPROD" == "1" ] && RTINST=$(dirname $(grep "Starting task with path" ${APPLOG} | awk -F":" '{print $4}'))
+        #Levantamos el componente.
+        fnStartWL
 fi
 
 }
@@ -301,10 +301,10 @@ fnCheckJB()  # 300320-1858
  if [ $(cat ${APPLOG} | grep ${APWAR} | wc -l) -ge 1 ]
  then
         msg "Aplicación existente." "DEBUG"
-	mFORCE=true
+        mFORCE=true
  else
         msg "La Aplicación no está instalada, se procede instalacion." "DEBUG"
-	mFORCE=false
+        mFORCE=false
  fi
 
 }
@@ -318,15 +318,15 @@ fnCheckWL()  # 111110-1745
    msg "${APNAME}" "DEBUG"
    echo "===== LIST APP =====" >> ${APPLOG}
 # Nueva forma de listar aplicaciones | 131121-1708
-   nohup ${JAVA_HOME}/bin/java -Xms${vMemoryIni} -Xmx${vMemoryMax} -cp ${WEBLOGIC_HOME}/server/lib/weblogic.jar weblogic.Deployer ${OPTIONS3} -listapps >> ${APPLOG} 2>&1 
+   nohup ${JAVA_HOME}/bin/java -Xms${vMemoryIni} -Xmx${vMemoryMax} -cp ${WEBLOGIC_HOME}/server/lib/weblogic.jar weblogic.Deployer ${OPTIONS3} -listapps >> ${APPLOG} 2>&1
    cAppCount=$(grep ${APNAME} ${APPLOG} | wc -l)
    #msg "${APNAME}: ${cAppCount}" "DEBUG"
- 
+
    if [ ${cAppCount} -ge 1 ]
    then
-	msg "Aplicación existente." "OK"
+        msg "Aplicación existente." "OK"
    else
-	msg "La Aplicación no está instalada." "WARN"
+        msg "La Aplicación no está instalada." "WARN"
    fi
  else
    msg "Undeploy activado, se omite Check" "WARN"
@@ -339,20 +339,20 @@ fnStartJB() # 300320-1858
  echo "===== START APP =====" >> ${APPLOG}
  if [ ${vTYPJB} == "DOMAIN" ] # Issue: 240922-1347
  then
-	echo "Starting in ${vTYPJB} Mode" >> ${APPLOG}
-	for Group in ${SRVNAMES/,/ }
-	do
- 	  ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/server-group=${Group}:start-servers" >> ${APPLOG}  2>&1 # 050620-0930
-	  sleep 10
-	  #${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/server-group=${Group}:start-servers" >> ${APPLOG}  2>&1
- 	  msg "Componente Encendido - ${Group}." "OK"
-	done
+        echo "Starting in ${vTYPJB} Mode" >> ${APPLOG}
+        for Group in ${SRVNAMES/,/ }
+        do
+          ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/server-group=${Group}:start-servers" >> ${APPLOG}  2>&1 # 050620-0930
+          sleep 10
+          #${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/server-group=${Group}:start-servers" >> ${APPLOG}  2>&1
+          msg "Componente Encendido - ${Group}." "OK"
+        done
  elif [ ${vTYPJB} == "STANDALONE" ]
  then
-	nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command=":reload" >> ${APPLOG}  2>&1
-	msg "Componente reload." "OK"
+        nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command=":reload" >> ${APPLOG}  2>&1
+        msg "Componente reload." "OK"
  else
-	msg "revisar tipo de JBoss" "INFO"
+        msg "revisar tipo de JBoss" "INFO"
  fi
 
 }
@@ -376,14 +376,14 @@ fnCheckInstJB()
 {
   echo "Host Controller and Servers on JBoss:" >> ${APPLOG}
   for Grp in ${1}
-  do 
+  do
     for HC in $(${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="ls host=")
     do
-	grpInfo=$(${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/host=${HC}:resolve-expression-on-domain" | grep ${Grp} | awk '{print $1,$5,$7}'| sed 's/{//g'|sed 's/"//g')
-	echo "${grpInfo}" | grep .. >> ${APPLOG}
+        grpInfo=$(${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/host=${HC}:resolve-expression-on-domain" | grep ${Grp} | awk '{print $1,$5,$7}'| sed 's/{//g'|sed 's/"//g')
+        echo "${grpInfo}" | grep .. >> ${APPLOG}
     done
   done
-	  
+
 
 }
 
@@ -402,33 +402,33 @@ fnStopJB() # 300320-1858
 
  if [ ${vTYPJB} == "DOMAIN" ]
  then
-	#echo "Execute stop in ${vTYPJB}" >> ${APPLOG}
-	for Group in ${SRVNAMES/,/ }
-	do
-	  echo "Stop Group Server: $Group" >> ${APPLOG}
-	  fnCheckInstJB ${Group}
+        #echo "Execute stop in ${vTYPJB}" >> ${APPLOG}
+        for Group in ${SRVNAMES/,/ }
+        do
+          echo "Stop Group Server: $Group" >> ${APPLOG}
+          fnCheckInstJB ${Group}
 
-	  if [ $(echo "${vJBVerRel} >= 7.2" | bc) -eq 1 ] # 120123-2011
-	  #if [ "${vJBVerRel}" == "7.2" -o "${vJBVerRel}" == "7.4" ]
-	  then 
-	    nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/server-group=${Group}:kill-servers" >> ${APPLOG}  2>&1
-	  else	
- 	    nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/server-group=${Group}:stop-servers" >> ${APPLOG}  2>&1 # 050620-0930
-	  fi
+          if [ $(echo "${vJBVerRel} >= 7.2" | bc) -eq 1 ] # 120123-2011
+          #if [ "${vJBVerRel}" == "7.2" -o "${vJBVerRel}" == "7.4" ]
+          then
+            nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/server-group=${Group}:kill-servers" >> ${APPLOG}  2>&1
+          else
+            nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command="/server-group=${Group}:stop-servers" >> ${APPLOG}  2>&1 # 050620-0930
+          fi
 
-   	  if [ $? -gt 0 ] #101019-1211 Valida si se apagó o  no.
-	  then
-    	    msg "No se pudo detener la aplicación (Group ${Group}), probablemente no existe la aplicación o ya se enuentra abajo, se continua con el deploy" "WARN"
-	  else
+          if [ $? -gt 0 ] #101019-1211 Valida si se apagó o  no.
+          then
+            msg "No se pudo detener la aplicación (Group ${Group}), probablemente no existe la aplicación o ya se enuentra abajo, se continua con el deploy" "WARN"
+          else
             msg "Componente Apagado - ${Group}." "OK"
-	  fi
+          fi
 
         done
 
  elif [ "${vTYPJB}" == "STANDALONE" ]
  then
-	msg "JBoss standalone, se continua deploy" "INFO"
-	#nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command=":stop-servers" >> ${APPLOG}  2>&1 
+        msg "JBoss standalone, se continua deploy" "INFO"
+        #nohup ${JB_HOME}/bin/jboss-cli.sh ${OPTIONS} --command=":stop-servers" >> ${APPLOG}  2>&1
  fi
 
 }
@@ -448,7 +448,7 @@ fnStopWL()
    then
        msg "No se pudo detener la aplicación, probablemente no existe la aplicación o ya se enuentra abajo, se continua con el deploy" "WARN"
    else
-    	msg "Componente Apagado." "OK"
+        msg "Componente Apagado." "OK"
    fi
 else
   msg "Undeploy activado, se omite Stop" "WARN"
@@ -466,7 +466,7 @@ fnErrorExecute()
                  fnEstructuraTemp # 1010221505
                  exit 1 # 190619 Bug detectado, hacia doble rollback cuando la opcion era rollback
                  ;;
-         "new")
+         "new"|"fix") #030523-2000
                  [ "$NPROD" == "0" ] && msg "Aplicando Rollback a la estructura Generada:" "DEBUG"
                  [ "$NPROD" == "0" ] && fnEstructuraRB
                  ;;
@@ -476,51 +476,51 @@ fnErrorExecute()
 
 fnError()
 {
-	for f in $(ls -lad ${APHOME}/data/*.dat|awk '{print $9}')
-	do
-		source ${f}
-		CNTotal=0
-		CNT1=0
-		CNT2=0
-		CNT3=0
-		#200719-0023 Variable de workspace, usado desde Jenkins.
-		# Antes: ${WORKSPACE}/${APPLOG}
-		[ "${ERR1}" != "" ] && CNT1=$(grep "${ERR1}"  ${APPLOG} | wc -l)
-		[ "${ERR2}" != "" ] && CNT2=$(grep "${ERR2}" ${APPLOG} | wc -l)
-		[ "${ERR3}" != "" ] && CNT3=$(grep "${ERR3}" ${APPLOG} | wc -l)
-		#echo "===== ERROR CATALOG =====" >> ${APPLOG}
-		#echo "Error1:${CNT1}	Error2:${CNT2}		Error3:${CNT3}" >> ${APPLOG}
-		CNTotal=$((CNT1 + CNT2 + CNT3))
+        for f in $(ls -lad ${APHOME}/data/*.dat|awk '{print $9}')
+        do
+                source ${f}
+                CNTotal=0
+                CNT1=0
+                CNT2=0
+                CNT3=0
+                #200719-0023 Variable de workspace, usado desde Jenkins.
+                # Antes: ${WORKSPACE}/${APPLOG}
+                [ "${ERR1}" != "" ] && CNT1=$(grep "${ERR1}"  ${APPLOG} | wc -l)
+                [ "${ERR2}" != "" ] && CNT2=$(grep "${ERR2}" ${APPLOG} | wc -l)
+                [ "${ERR3}" != "" ] && CNT3=$(grep "${ERR3}" ${APPLOG} | wc -l)
+                #echo "===== ERROR CATALOG =====" >> ${APPLOG}
+                #echo "Error1:${CNT1}   Error2:${CNT2}          Error3:${CNT3}" >> ${APPLOG}
+                CNTotal=$((CNT1 + CNT2 + CNT3))
 
-		#if [ $CNT1 -gt 0 ] || [ $CNT2 -gt 0 ] || [ $CNT3 -gt 0 ]
-		if [ $CNTotal -gt 0 ]
-		then
-			msg "$(basename $f | awk -F'.' '{print $1}') -> $ERR1... $ERR2... $ERR3" "ERROR" 
-			msg "$SOL" "SOLUCION"
-			return 1
-		fi
-	done
+                #if [ $CNT1 -gt 0 ] || [ $CNT2 -gt 0 ] || [ $CNT3 -gt 0 ]
+                if [ $CNTotal -gt 0 ]
+                then
+                        msg "$(basename $f | awk -F'.' '{print $1}') -> $ERR1... $ERR2... $ERR3" "ERROR"
+                        msg "$SOL" "SOLUCION"
+                        return 1
+                fi
+        done
 }
 fnValida()
 {
-	msg "Validando que exista componente en la ruta repositorio:" "INFO"	
-	
-	if [ ! -f ${RTJK}/${APWAR} ]
-	then
-		msg "Ruta: ${RTJK}/${APWAR}" "DEBUG"
-		msg "No hay componente war dentro de la ruta de Jenkins, favor de copiar componente" "ERROR"
-		exit 1
-	else
-		msg "Validación exitosa." "OK"
-		msg "$(md5sum ${RTJK}/${APWAR})" "DEBUG"
-		#md5sum ${RTJK}/${APWAR} |awk '{print $1}' > version.txt # 240922-1347
-	fi
+        msg "Validando que exista componente en la ruta repositorio:" "INFO"
 
-	if [ "${NRFC}" == "" ] && [ $NPROD != 1 ]
-	then
-		msg "No se coloco el numero de RFC, favor de colocar el RFC cuando se ejecute el job." "ERROR"
-        	exit 1
-	fi
+        if [ ! -f ${RTJK}/${APWAR} ]
+        then
+                msg "Ruta: ${RTJK}/${APWAR}" "DEBUG"
+                msg "No hay componente war dentro de la ruta de Jenkins, favor de copiar componente" "ERROR"
+                exit 1
+        else
+                msg "Validación exitosa." "OK"
+                msg "$(md5sum ${RTJK}/${APWAR})" "DEBUG"
+                #md5sum ${RTJK}/${APWAR} |awk '{print $1}' > version.txt # 240922-1347
+        fi
+
+        if [ "${NRFC}" == "" ] && [ $NPROD != 1 ]
+        then
+                msg "No se coloco el numero de RFC, favor de colocar el RFC cuando se ejecute el job." "ERROR"
+                exit 1
+        fi
 
 }
 
@@ -543,7 +543,7 @@ if [ -f ${APHOME}/conf/rdeployer.conf ]
 then
          . ${APHOME}/conf/rdeployer.conf
          msg "Archivo de Configuracion global cargado." "OK"
-	 [ "${PluginLauncher}" == "UrbanCode" ] && AutoColorOutPut=false
+         [ "${PluginLauncher}" == "UrbanCode" ] && AutoColorOutPut=false
 else
          msg "No se encuentra el archivo de configuracion Global: ${APHOME}/conf/rdeployer.conf" "ERROR"
          exit 1
@@ -551,13 +551,13 @@ fi
 
 if [ -f ${APHOME}/util/txt2term.io ]
 then
-	. ${APHOME}/util/txt2term.io
+        . ${APHOME}/util/txt2term.io
 else
-	msg "No se encuentra archivo de utilidad: ${APHOME}/util/txt2term.io" "ERROR"
-	exit 1
+        msg "No se encuentra archivo de utilidad: ${APHOME}/util/txt2term.io" "ERROR"
+        exit 1
 fi
 
-	
+
 msg "Validando archivo de configuracion:" "INFO"
 
 if [ -f ${APDIR}/${APNAME}.conf ]
@@ -573,9 +573,9 @@ fi
 
 if [ "${ServerDomainHostname}" != "" ]
 then
-	LOGURL="${https}${ServerDomainHostname}:${ServerDomainPort}/job/${JOB_NAME}/"
+        LOGURL="${https}${ServerDomainHostname}:${ServerDomainPort}/job/${JOB_NAME}/"
 else
-	LOGURL=${JOB_URL}
+        LOGURL=${JOB_URL}
 fi
 
 #. ${APHOME}/util/colors.io
@@ -588,15 +588,15 @@ vCOMP=$1
 
 if [ "${PROJECTCONF}" == "${vCOMP}" ]
 then
-	vFirmaXMLRemote=$(ssh -q ${IPSRV} "md5sum ${RTINST}/${vCOMP}" | awk '{print $1}')
-	vFirmaXMLLocal=$(md5sum ${RTJK}/${vCOMP} | awk '{print $1}')
-	
-	if [ "${vFirmaXMLLocal}" != "${vFirmaXMLRemote}" ]
-	then
-	  fnEstructuraNew ${vCOMP}
-	else
-	  msg "XML sin modificaciones, se omite copiado" "INFO"
-	fi
+        vFirmaXMLRemote=$(ssh -q ${IPSRV} "md5sum ${RTINST}/${vCOMP}" | awk '{print $1}')
+        vFirmaXMLLocal=$(md5sum ${RTJK}/${vCOMP} | awk '{print $1}')
+
+        if [ "${vFirmaXMLLocal}" != "${vFirmaXMLRemote}" ]
+        then
+          fnEstructuraNew ${vCOMP}
+        else
+          msg "XML sin modificaciones, se omite copiado" "INFO"
+        fi
 fi
 }
 
@@ -607,11 +607,13 @@ vFirmaActual=$(ssh -q ${IPSRV} "md5sum ${RTINST}/${vCOMP}" | awk '{print $1}') #
 vFirmaNewComponente=$(md5sum ${RTJK}/${vCOMP} | awk '{print $1}') #250423-1837
 
 if [ "${vFirmaActual}" != "${vFirmaNewComponente}" ]; then #250423-1837
-  RUTA_COPIA="${RTINST}/${YEAR}/${MES}/${NRFC}"
+  RUTA_COPIA="${RTINST}/${YEAR}/${MES}/${NRFC}/${TYPEINST}" # 240823-200
   msg "Creando comando para estructura de directorios:" "INFO"
   msg "${RTINST}" "DEBUG"
   msg "${YEAR}" "DEBUG"
   msg "${MES}" "DEBUG"
+  [ "${TYPEINST}" == "fix" ] && msg "FIX" "DEBUG" # 030523-2000
+
   CMD1="mkdir -p ${RUTA_COPIA}"
   ssh -q ${IPSRV} "${CMD1}"
   # 080320-2358 Se actualiza la forma de estructura con mas validaciones.
@@ -637,8 +639,8 @@ if [ "${vFirmaActual}" != "${vFirmaNewComponente}" ]; then #250423-1837
 
   if [ $? -gt 0 ]
   then
-  	msg "Error al copiar el componente ${vCOMP}" "ERROR"
-	exit 1
+        msg "Error al copiar el componente ${vCOMP}" "ERROR"
+        exit 1
   fi
 
   msg "Ejecutando comandos de estructura:" "INFO"
@@ -664,7 +666,6 @@ fnEstructuraTemp()
 fnEstructuraRB()
 {
 msg "Buscando prev en backups para montar como .prev" "INFO"
-#APWARBCK=$(ssh -q ${IPSRV} "find ${RTINST}/.bck/ -name '${APWAR}.prev.*'" | head -1)
 APWARBCK=$(ssh -q ${IPSRV} "ls -ltr ${RTINST}/.bck/${APWAR}.prev.*| tail -1")
 
 msg "Creando comando para borrado de componente actual" "INFO"
@@ -696,31 +697,44 @@ fnRBCopyESB() # 081221-0524
 msg "Copiando componentes para deploy Rollback de ESB:" "INFO"
 scp -qrpo ConnectTimeout=${TimeOutSSH} ${IPSRV}:${RTINST}/${APWAR} ${RTJK}/.
 
+if [ -f ${RTJK}/${PROJECTCONF} ]
+then
+# 231121-1130: Checa archivo XML
+ vXML=${RTJK}/${PROJECTCONF}
+ msg "XML Config: ${PROJECTCONF}" "DEBUG"
+else
+ msg "XML No encontrado, se realiza instalación sólo del JAR sin configuración" "WARN"
+ vXML="None"
+ msg "${vXML}" "DEBUG"
+fi
+
 if [ $? -gt 0 ]
 then
-	msg "No se puede extraer componente para Rollback" "ERROR"
-	exit 1
+        msg "No se puede extraer componente para Rollback" "ERROR"
+        exit 1
 else
-	scp -qrpo ConnectTimeout=${TimeOutSSH} ${IPSRV}:${RTINST}/${PROJECTCONF} ${RTJK}/.
+        scp -qrpo ConnectTimeout=${TimeOutSSH} ${IPSRV}:${RTINST}/${PROJECTCONF} ${RTJK}/.
 
-	if [ $? -gt 0 ]
-	then
-	  msg "No se puede extraer componente para Rollback" "ERROR"
-	  exit 1
-	fi
+        if [ $? -gt 0 ] && [ ${vXML} != "None" ]
+        then
+          msg "No se puede extraer componente para Rollback" "ERROR"
+          exit 1
+        else
+         msg "No se puede extraer xml, se continua con componente WAR" "WARN"
+        fi
 fi
-	
+
 msg "Componentes validados." "OK"
 
 }
 fnValidateFile()
 {
   FileVal=$1
-  
+
   if [ ! -f ${FileVal} ]; then
   msg "No existe Archivo ${FileVal}, favor de validar" "ERROR"
   else
-	msg "${FileVal} seems right!" "DEBUG"
+        msg "${FileVal} seems right!" "DEBUG"
   fi
 
 }
@@ -731,23 +745,24 @@ fnGetConsole()
 #CONN="$(${APHOME}/util/xmlUtil.io ${APHOME}/conf ${NODE})"
 xUTIL=xmlUtil3  #260520-1157
 fnValidateFile ${APHOME}/util/${xUTIL}.io
-msg "Versión XML Util: ${xUTIL}" "INFO" #260520-1157
+xVerUTIL=$( ${APHOME}/util/${xUTIL}.io --version) #090523-1642
+msg "Versión XML Util: ${xVerUTIL}" "INFO" #260520-1157, 090523-1642
 CONN="$(${APHOME}/util/${xUTIL}.io ${APHOME}/conf ${NODE} $1)"
 
 case "${CONN}" in
 
-	"ERR1")
-		msg "XML sintaxis incorrecta" "ERROR"
-		exit 1
-		;;
-	"ERR2")
-		msg "Archivo XML no encontrado" "ERROR"
-		exit 1
-		;;
-	"ERR3")
-		msg "Datos de usuario y password no encontrados para NODO ${NODE}" "ERROR"
-		exit 1
-		;;
+        "ERR1")
+                msg "XML sintaxis incorrecta" "ERROR"
+                exit 1
+                ;;
+        "ERR2")
+                msg "Archivo XML no encontrado" "ERROR"
+                exit 1
+                ;;
+        "ERR3")
+                msg "Datos de usuario y password no encontrados para NODO ${NODE}" "ERROR"
+                exit 1
+                ;;
 esac
 
 msg "Datos de consola encontrados." "OK"
@@ -770,24 +785,25 @@ fnTipoEstructuraInstall()
 msg "Tipo de Instalación: ${TYPEINST}" "INFO"
 
 case $1 in
-"new")
-	msg "Número de RFC: ${NRFC}" "INFO"
-	fnEstructuraNew ${APWAR} 
-	if [ -f ${RTJK}/${PROJECTCONF} ]; then
-	  [ "${DODEPLOY}" == "esb" ] && fnEstructuraNewESB ${PROJECTCONF}
-	else
-	  [ "${DODEPLOY}" == "esb" ] && msg "XML No encontrado, se ignora archivo. Probable instalación sin XML" "WARN"
-	fi
-	  
-	;;
+"new"|"fix") #030523-2000
+        msg "Número de RFC: ${NRFC}" "INFO"
+        fnEstructuraNew ${APWAR}
+        if [ -f ${RTJK}/${PROJECTCONF} ]; then
+          [ "${DODEPLOY}" == "esb" ] && fnEstructuraNewESB ${PROJECTCONF}
+        else
+          [ "${DODEPLOY}" == "esb" ] && msg "XML No encontrado, se ignora archivo. Probable instalación sin XML" "WARN"
+        fi
+
+        ;;
+
 "rollback")
-	msg "Número de RFC del que falló: ${NRFC}" "INFO"
-	NRFC=$(ssh -q ${IPSRV} "ls -lad ${RTINST}/${APWAR}.prev" | awk '{print $11}' | awk -F "/" '{print $8}')
-	msg "Número de RFC de RollBack: ${NRFC}" "INFO"
-	fnEstructuraRB ${APWAR}
-	[ "${DODEPLOY}" == "esb" ] && fnEstructuraRB ${PROJECTCONF}	
-	[ "${DODEPLOY}" == "esb" ] && fnRBCopyESB
-	;;
+        msg "Número de RFC del que falló: ${NRFC}" "INFO"
+        NRFC=$(ssh -q ${IPSRV} "ls -lad ${RTINST}/${APWAR}.prev" | awk '{print $11}' | awk -F "/" '{print $8}')
+        msg "Número de RFC de RollBack: ${NRFC}" "INFO"
+        fnEstructuraRB ${APWAR}
+        [ "${DODEPLOY}" == "esb" ] && fnEstructuraRB ${PROJECTCONF}
+        [ "${DODEPLOY}" == "esb" ] && fnRBCopyESB
+        ;;
 esac
 
 }
@@ -795,150 +811,160 @@ esac
 fnPluginInfo() {
 
 case $1 in
-	"weblogic")
-	echo "===== PLUGIN VERSION =====" >> ${APPLOG}
-	if [ -f ${WEBLOGIC_HOME}/server/lib/weblogic.jar ]; then
-	  ${JAVA_HOME}/bin/java -Xms${vMemoryIni} -Xmx${vMemoryMax} -cp ${WEBLOGIC_HOME}/server/lib/weblogic.jar weblogic.Deployer -version >> ${APPLOG}
-	else
-	  msg "Plugin no encontrado en la ruta ${WEBLOGIC_HOME}" "ERROR"
-	  exit 1
-	fi
-	
-	if [ $? -gt 0 ]
-	then
-		msg "no se puede cargar plugin, favor de validar salida del log y revisar si existen los binarios" "ERROR"
-		exit 1
-	fi
-			;;
+        "weblogic")
+        echo "===== PLUGIN VERSION =====" >> ${APPLOG}
+        if [ -f ${WEBLOGIC_HOME}/server/lib/weblogic.jar ]; then
+          ${JAVA_HOME}/bin/java -Xms${vMemoryIni} -Xmx${vMemoryMax} -cp ${WEBLOGIC_HOME}/server/lib/weblogic.jar weblogic.Deployer -version >> ${APPLOG}
+        else
+          msg "Plugin no encontrado en la ruta ${WEBLOGIC_HOME}" "ERROR"
+          exit 1
+        fi
 
-	"jboss") # 210323-1151
-	echo "===== PLUGIN VERSION =====" >> ${APPLOG}
+        if [ $? -gt 0 ]
+        then
+                msg "no se puede cargar plugin, favor de validar salida del log y revisar si existen los binarios" "ERROR"
+                exit 1
+        fi
+                        ;;
 
-	if [ -f ${JB_HOME}/bin/jboss-cli.sh ]; then
-		msg "JBoss CLI Detected" >> ${APPLOG}
-	else
-		msg "No se encuentra el archivo plugin para Jboss en ${JB_HOME}" "ERROR"
-		exit 1
-	fi
-			;;
+        "jboss") # 210323-1151
+        echo "===== PLUGIN VERSION =====" >> ${APPLOG}
 
-	"esb")
-	if [ -f ${OSB_HOME}/osb/tools/configjar/setenv.sh ]
-	then
-		echo "===== PLUGIN VERSION =====" >> ${APPLOG}
-        	source ${OSB_HOME}/osb/tools/configjar/setenv.sh >> ${APPLOG}
-        	if [ $? -gt 0 ]
-        	then
+        if [ -f ${JB_HOME}/bin/jboss-cli.sh ]; then
+                msg "JBoss CLI Detected" >> ${APPLOG}
+        else
+                msg "No se encuentra el archivo plugin para Jboss en ${JB_HOME}" "ERROR"
+                exit 1
+        fi
+                        ;;
+
+        "esb")
+        if [ -f ${OSB_HOME}/osb/tools/configjar/setenv.sh ]
+        then
+                echo "===== PLUGIN VERSION =====" >> ${APPLOG}
+                source ${OSB_HOME}/osb/tools/configjar/setenv.sh >> ${APPLOG}
+                if [ $? -gt 0 ]
+                then
                   msg "No se puede aplicar set de variables necesarias para ESB, favor de revisar salida de log" "ERROR"
                   exit 1
-        	else
-                	#msg "Configuracion cargada para esb" "OK"
-			${JAVA_HOME}/bin/java weblogic.version|head -2|tail -1 >> ${APPLOG}
-        	fi
-	else
-        	msg "No existe el archivo para cargar configuracion de esb, favor de validar" "ERROR"
-        	exit 1
-	fi
-			;;
+                else
+                        #msg "Configuracion cargada para esb" "OK"
+                        ${JAVA_HOME}/bin/java weblogic.version|head -2|tail -1 >> ${APPLOG}
+                fi
+        else
+                msg "No existe el archivo para cargar configuracion de esb, favor de validar" "ERROR"
+                exit 1
+        fi
+                        ;;
 
 esac
 }
 
 fnNPROD()
 {
-	[ $1 -eq 1 ] && RTINST=$(dirname $(grep "Starting task with path" ${APPLOG} | awk -F":" '{print $4}'))
+        [ $1 -eq 1 ] && RTINST=$(dirname $(grep "Starting task with path" ${APPLOG} | awk -F":" '{print $4}'))
 }
 
 msg()
 {
 case $2 in
-	"ERROR")
-		U_HOUR="$(date '+%H%M%S')"
-		if [ "${AutoColorOutPut}" = true ] 
-		then
-			printf "\e[31m[$U_HOUR] [$2]\e[0m $1\e[0m\n"
-		else
-			printf "[$U_HOUR] [$2] $1\n"
-		fi
-		;;
-	"WARN")
-		U_HOUR="$(date '+%H%M%S')"
-		if [ "${AutoColorOutPut}" = true ]
-		then
-			printf "\e[33m[$U_HOUR] [$2]\e[0m $1\e[0m\n"
-		else
-			printf "[$U_HOUR] [$2] $1\n"
-		fi
-		;;
-	"OK")
-		U_HOUR="$(date '+%H%M%S')"
-		if [ "${AutoColorOutPut}" = true ]
-		then
-			printf "\e[32m[$U_HOUR] [$2]\e[0m $1\e[0m\n"
-		else
-			printf "[$U_HOUR] [$2] $1\n"
-		fi
-		;;
-	"DEBUG")
+        "ERROR")
                 U_HOUR="$(date '+%H%M%S')"
-		if [ "${AutoColorOutPut}" = true ]
-		then
-                	printf "\e[35m[$U_HOUR] [$2]\e[0m $1\e[0m\n"
-		else
-			printf "[$U_HOUR] [$2] $1\n"
-		fi
+                if [ "${AutoColorOutPut}" = true ]
+                then
+                        printf "\e[31m[$U_HOUR] [$2]\e[0m $1\e[0m\n"
+                else
+                        printf "[$U_HOUR] [$2] $1\n"
+                fi
+                ;;
+        "WARN")
+                U_HOUR="$(date '+%H%M%S')"
+                if [ "${AutoColorOutPut}" = true ]
+                then
+                        printf "\e[33m[$U_HOUR] [$2]\e[0m $1\e[0m\n"
+                else
+                        printf "[$U_HOUR] [$2] $1\n"
+                fi
+                ;;
+        "OK")
+                U_HOUR="$(date '+%H%M%S')"
+                if [ "${AutoColorOutPut}" = true ]
+                then
+                        printf "\e[32m[$U_HOUR] [$2]\e[0m $1\e[0m\n"
+                else
+                        printf "[$U_HOUR] [$2] $1\n"
+                fi
+                ;;
+        "DEBUG")
+                U_HOUR="$(date '+%H%M%S')"
+                if [ "${AutoColorOutPut}" = true ]
+                then
+                        printf "\e[35m[$U_HOUR] [$2]\e[0m $1\e[0m\n"
+                else
+                        printf "[$U_HOUR] [$2] $1\n"
+                fi
+                ;;
+        "BANNER")
+                U_HOUR="$(date '+%H%M%S')"
+                if [ "${AutoColorOutPut}" = true ]
+                then
+                        printf "\e[30;48;5;82m[$1]\e[0m\n"
+                else
+                        printf "[$U_HOUR] [$2] $1\n"
+                fi
                 ;;
 
-	*)
-		U_HOUR="$(date '+%H%M%S')"
-		printf "[$U_HOUR] [$2] $1\n"
-		;;
+        *)
+                U_HOUR="$(date '+%H%M%S')"
+                printf "[$U_HOUR] [$2] $1\n"
+                ;;
 esac
 }
 
 # MAIN #
+msg "rdeployer para ${PluginLauncher}, cocinando instalaciones desde 2018" "BANNER"
 [ "${PluginLauncher}" == "UrbanCode" ] && AutoColorOutPut=false
 
 
 if [ "${AutoColorOutPut}" = true ]
 then
-	msg "Versión de rdeployer: \e[1m$VERSION\e[0m" "INFO"
+        msg "Versión de rdeployer: \e[1m$VERSION\e[0m" "INFO"
 else
-	msg "Versión de rdeployer: $VERSION" "INFO"
+        msg "Versión de rdeployer: $VERSION" "INFO"
 fi
 
-fnConfig 
+fnConfig
 fnValida
 
 msg "Plugin Launcher: ${PluginLauncher}" "INFO"
 case $DODEPLOY in
  "weblogic")
-	fnPluginInfo weblogic	
-	msg "Plugin cargado: Weblogic_Deployer" "INFO"
-	fnGetConsole Weblogic
-	[ "$NPROD" == "0" ] && fnTipoEstructuraInstall ${TYPEINST} # 120521-0111
-	fnDeployerWL ${NPROD} # Variable NPROD obtenido de Jenkins
-	fnFirma ${NPROD} ${APWAR} # Variable NPROD obtenido de Jenkins
-	;;
+        fnPluginInfo weblogic
+        msg "Plugin cargado: Weblogic_Deployer" "INFO"
+        fnGetConsole Weblogic
+        [ "$NPROD" == "0" ] && fnTipoEstructuraInstall ${TYPEINST} # 120521-0111
+        fnDeployerWL ${NPROD} # Variable NPROD obtenido de Jenkins
+        fnFirma ${NPROD} ${APWAR} # Variable NPROD obtenido de Jenkins
+        ;;
  "jboss")
-	fnPluginInfo jboss # 210323-1151
-	msg "Plugin cargado: JBoss_CLI" "INFO"
-	fnGetConsole JBoss
-	[ "$NPROD" == "0" ] && fnTipoEstructuraInstall ${TYPEINST} # 120521-0111
-	fnDeployerJB ${NPROD}
-	fnFirma ${NPROD} ${APWAR} # Variable NPROD obtenido de Jenkins
-	;;
+        fnPluginInfo jboss # 210323-1151
+        msg "Plugin cargado: JBoss_CLI" "INFO"
+        fnGetConsole JBoss
+        [ "$NPROD" == "0" ] && fnTipoEstructuraInstall ${TYPEINST} # 120521-0111
+        fnDeployerJB ${NPROD}
+        fnFirma ${NPROD} ${APWAR} # Variable NPROD obtenido de Jenkins
+        ;;
  "esb")
-	fnPluginInfo esb
-	msg "Plugin cargado: Oracle_Services_Bus" "INFO"
-	fnGetConsole ESB
-	[ "$NPROD" == "0" ] && fnTipoEstructuraInstall ${TYPEINST} # 120521-0111
-	fnDeployESB ${NPROD}
-	fnFirma ${NPROD} "${PROJECTCONF} ${APWAR}" # Variable NPROD obtenido de Jenkins
-	;;
+        fnPluginInfo esb
+        msg "Plugin cargado: Oracle_Services_Bus" "INFO"
+        fnGetConsole ESB
+        [ "$NPROD" == "0" ] && fnTipoEstructuraInstall ${TYPEINST} # 120521-0111
+        fnDeployESB ${NPROD}
+        fnFirma ${NPROD} "${PROJECTCONF} ${APWAR}" # Variable NPROD obtenido de Jenkins
+        ;;
  *)
-	msg "Archivo CONF no tiene propiedad DODEPLOY, favor de configurar: DODEPLOY=[weblogic|jboss|esb]" "ERROR"
-	;;
+        msg "Archivo CONF no tiene propiedad DODEPLOY, favor de configurar: DODEPLOY=[weblogic|jboss|esb]" "ERROR"
+        ;;
 esac
 
 exit ${vEXIT}
