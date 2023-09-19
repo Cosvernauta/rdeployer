@@ -7,9 +7,9 @@
 [EN] A shell tool, in order to deploy components on Webglogic/JBoss/OSB, using Jenkins with Jobs :-)
 
 
-ROADMAP     -   Seguimiento de la versión de rdeployer
+[ROADMAP](https://github.com/Cosvernauta/rdeployer/blob/d7c33fcb3903d9edf5588479b2b024cbf727e4c2/ROADMAP)     -   Seguimiento de la versión de rdeployer
 
-INSTALL.me  -   Instrucciones para la instalación de rdeployer en conjunto con Jenkins.
+[INSTALL.me](https://github.com/Cosvernauta/rdeployer/blob/d7c33fcb3903d9edf5588479b2b024cbf727e4c2/INSTALL.me)  -   Instrucciones para la instalación de rdeployer en conjunto con Jenkins.
 
 # Jimmy R. cosvernautaux(a)gmail.com
 
